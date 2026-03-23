@@ -222,10 +222,15 @@ mobileEndBtn.addEventListener('click', () => {
   const chosenVideo = giftVideos[randomIndex];
 
   mainVideo.pause();
-  mainVideo.src = chosenVideo;
-  mainVideo.play();
-});
 
+  giftOverlay.classList.add('show');
+  giftOverlay.classList.add('withBg');
+
+  giftVideo.src = chosenVideo;
+  giftVideo.style.display = 'block';
+  giftVideo.load();
+  giftVideo.play().catch(() => {});
+});
 // 💻 PC gomb
 randomGiftBtn.addEventListener('click', () => {
   const randomIndex = Math.floor(Math.random() * giftVideos.length);
