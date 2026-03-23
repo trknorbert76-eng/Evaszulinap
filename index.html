@@ -167,7 +167,7 @@
 <!-- VIDEÓ -->
 <section id="videoScreen" class="screen">
   <div class="videoFrame">
-    <video id="mainVideo" playsinline webkit-playsinline preload="auto"></video>
+   <video id="mainVideo" playsinline webkit-playsinline preload="auto"></video>
   </div>
 </section>
 
@@ -243,16 +243,22 @@ mainVideo.addEventListener('timeupdate', () => {
   }
 });
 
-mobileEndBtn.onclick = () => {
+playBtn.onclick = async () => {
   mobileEndScreen.style.display = 'none';
+  giftOverlay.classList.remove('show');
+  giftOverlay.classList.remove('withBg');
 
-  const random = giftVideos[Math.floor(Math.random()*giftVideos.length)];
+  videoScreen.style.display = 'flex';
+  showScreen(videoScreen);
 
-  giftOverlay.classList.add('show');
-  giftOverlay.classList.add('withBg');
+  mainVideo.src = VIDEO_URL + "?t=" + Date.now();
+  mainVideo.load();
 
-  giftVideo.src = random + "?t=" + Date.now();
-  giftVideo.play();
+  try {
+    await mainVideo.play();
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 giftCloseBtn.onclick = () => {
