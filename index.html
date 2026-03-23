@@ -76,36 +76,27 @@
       z-index: 5;
     }
 
-    #videoScreen {
-      position: fixed;
-      inset: 0;
-      background: #000;
-    }
-
     #mainVideo {
       width: 100vw;
       height: 100vh;
       object-fit: contain;
       background: #000;
-      position: relative;
-      z-index: 1;
     }
 
-    /* Láthatatlan hotspot a videón lévő "katt ide" fölött */
+    /* Láthatatlan gomb a "katt ide!" fölé */
     #randomGiftBtn {
       position: fixed;
       left: 50%;
       top: 58%;
       transform: translate(-50%, -50%);
-      width: 200px;
-      height: 110px;
+      width: 330px;
+      height: 150px;
       border: none;
-      background: transparent;
+      border-radius: 24px;
       cursor: pointer;
+      background: transparent;
+      z-index: 20;
       display: none;
-      z-index: 99999;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
     }
 
     .giftOverlay {
@@ -114,10 +105,10 @@
       display: none;
       align-items: center;
       justify-content: center;
-      background: rgba(0,0,0,0.28);
+      background: rgba(0,0,0,0.38);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      z-index: 10000;
+      z-index: 50;
       opacity: 0;
       transition: opacity 0.3s ease;
     }
@@ -181,7 +172,7 @@
       position: fixed;
       top: 18px;
       right: 18px;
-      z-index: 11000;
+      z-index: 100;
       width: 48px;
       height: 48px;
       border-radius: 50%;
@@ -194,16 +185,21 @@
     }
 
     @media (max-width: 700px) {
+      #mainVideo {
+        width: 100vw;
+        height: 100vh;
+        object-fit: contain;
+        background: #000;
+      }
+
       #giftVideo {
         object-fit: contain;
       }
-    }
 
-    @media (max-width: 900px) and (orientation: landscape) {
       #randomGiftBtn {
-        top: 60%;
-        width: 220px;
+        width: 250px;
         height: 120px;
+        top: 58%;
       }
     }
   </style>
@@ -218,7 +214,7 @@
   </section>
 
   <section id="videoScreen" class="screen">
-    <video id="mainVideo" playsinline controls preload="auto"></video>
+    <video id="mainVideo" playsinline preload="auto" controls controlsList="nodownload noplaybackrate"></video>
   </section>
 
   <button id="randomGiftBtn" aria-label="Ajándék videó"></button>
@@ -245,9 +241,14 @@
     const closeGiftBtn = document.getElementById('closeGiftBtn');
     const backBtn = document.getElementById('backBtn');
 
-    const VIDEO = "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774195689/utols%C3%B3ok_utols%C3%B3oja_qawodm.mp4";
+    const isMobile = window.innerWidth <= 700;
 
-    const gifts = [
+    const DESKTOP_VIDEO = "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774195689/utols%C3%B3ok_utols%C3%B3oja_qawodm.mp4";
+    const MOBILE_VIDEO = "https://res.cloudinary.com/dgcumjeuj/video/upload/q_auto,f_auto/v1774195689/utols%C3%B3ok_utols%C3%B3oja_qawodm.mp4";
+
+    const VIDEO_URL = (isMobile ? MOBILE_VIDEO : DESKTOP_VIDEO) + "?t=" + Date.now();
+
+    const giftVideos = [
       'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134175/T%C3%B6r%C3%B6k_Norbert_3_vers_a_szerelemr%C5%91l_gm8zu6.mp4',
       'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134156/25_%C3%A9vesen---T%C3%B6r%C3%B6k_Norbert_verse_am6wtk.mp4',
       'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134159/P%C3%A1rizs_Room_tour_2025_rnchhh.mp4',
@@ -259,31 +260,18 @@
       'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134099/T%C3%B6r%C3%B6k_Norbert_Ahogy_vagy.._n3ukws.mp4'
     ];
 
-    const GIFT_SHOW_TIME = 257;
-    let giftBtnVisible = false;
+    const GIFT_SHOW_TIME = 255; // 4:15
+    const LOOP_START = 257;     // 4:17
+    const LOOP_END = 260;       // 4:20 körül
 
-    mainVideo.src = VIDEO;
+    let giftBtnVisible = false;
+    let endMode = false;
+
+    mainVideo.src = VIDEO_URL;
 
     function showScreen(screen) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       screen.classList.add('active');
-    }
-
-    function openRandomGift() {
-      if (!gifts.length) return;
-
-      const randomIndex = Math.floor(Math.random() * gifts.length);
-      const chosenVideo = gifts[randomIndex];
-
-      mainVideo.pause();
-
-      giftOverlay.classList.add('show');
-      giftOverlay.classList.add('withBg');
-
-      giftVideo.src = chosenVideo;
-      giftVideo.style.display = 'block';
-      giftVideo.load();
-      giftVideo.play().catch(() => {});
     }
 
     function closeGiftPopup() {
@@ -295,14 +283,18 @@
 
       giftOverlay.classList.remove('show');
       giftOverlay.classList.remove('withBg');
-
-      mainVideo.play().catch(() => {});
     }
 
     playBtn.addEventListener('click', async () => {
       showScreen(videoScreen);
+
       giftBtnVisible = false;
+      endMode = false;
       randomGiftBtn.style.display = 'none';
+
+      closeGiftPopup();
+
+      mainVideo.controls = true;
 
       try {
         mainVideo.currentTime = 0;
@@ -317,33 +309,71 @@
         randomGiftBtn.style.display = 'block';
         giftBtnVisible = true;
       }
+
+      if (!endMode && mainVideo.currentTime >= LOOP_START) {
+        endMode = true;
+        mainVideo.controls = false;
+      }
+
+      if (endMode && mainVideo.currentTime >= LOOP_END) {
+        mainVideo.currentTime = LOOP_START;
+        mainVideo.play().catch(() => {});
+      }
     });
 
-    randomGiftBtn.addEventListener('click', openRandomGift);
+    mainVideo.addEventListener('seeking', () => {
+      if (endMode && mainVideo.currentTime > LOOP_START) {
+        mainVideo.currentTime = LOOP_START;
+      }
+    });
+
+    randomGiftBtn.addEventListener('click', () => {
+      if (!giftVideos.length) return;
+
+      const randomIndex = Math.floor(Math.random() * giftVideos.length);
+      const chosenVideo = giftVideos[randomIndex];
+
+      mainVideo.pause();
+
+      giftOverlay.classList.add('show');
+      giftOverlay.classList.add('withBg');
+
+      giftVideo.src = chosenVideo;
+      giftVideo.style.display = 'block';
+      giftVideo.load();
+      giftVideo.play().catch(err => {
+        console.log('A random videó nem indult el automatikusan:', err);
+      });
+    });
 
     giftOverlay.addEventListener('click', (e) => {
       if (e.target === giftOverlay) {
         closeGiftPopup();
+        if (endMode) {
+          mainVideo.currentTime = LOOP_START;
+        }
+        mainVideo.play().catch(() => {});
       }
     });
 
-    closeGiftBtn.addEventListener('click', closeGiftPopup);
+    closeGiftBtn.addEventListener('click', () => {
+      closeGiftPopup();
+      if (endMode) {
+        mainVideo.currentTime = LOOP_START;
+      }
+      mainVideo.play().catch(() => {});
+    });
 
     backBtn.addEventListener('click', () => {
       mainVideo.pause();
       mainVideo.currentTime = 0;
+
       giftBtnVisible = false;
+      endMode = false;
       randomGiftBtn.style.display = 'none';
+      mainVideo.controls = true;
 
-      giftVideo.pause();
-      giftVideo.currentTime = 0;
-      giftVideo.removeAttribute('src');
-      giftVideo.load();
-      giftVideo.style.display = 'none';
-
-      giftOverlay.classList.remove('show');
-      giftOverlay.classList.remove('withBg');
-
+      closeGiftPopup();
       showScreen(startScreen);
     });
   </script>
