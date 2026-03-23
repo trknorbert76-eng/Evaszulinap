@@ -81,29 +81,24 @@
       height: 100vh;
       object-fit: contain;
       background: #000;
+      pointer-events: none;
     }
 
     #randomGiftBtn {
-  position: fixed;
-  left: 50%;
-  top: 57.5%;
-  transform: translate(-50%, -50%);
-  width: 170px;
-  height: 95px;
-  border: none;
-  cursor: pointer;
-  background: transparent;
-  z-index: 9999;
-  display: none;
-  pointer-events: auto;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-    @keyframes pulse {
-      0%   { transform: translate(-50%, -50%) scale(1); }
-      50%  { transform: translate(-50%, -50%) scale(1.06); }
-      100% { transform: translate(-50%, -50%) scale(1); }
+      position: fixed;
+      left: 50%;
+      top: 57.5%;
+      transform: translate(-50%, -50%);
+      width: 170px;
+      height: 95px;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      z-index: 99999;
+      display: none;
+      pointer-events: auto;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .giftOverlay {
@@ -203,14 +198,15 @@
         object-fit: contain;
       }
     }
+
     @media (max-width: 900px) and (orientation: landscape) {
-  #randomGiftBtn {
-    left: 50%;
-    top: 60%;
-    width: 200px;
-    height: 110px;
-  }
-}
+      #randomGiftBtn {
+        left: 50%;
+        top: 60%;
+        width: 200px;
+        height: 110px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -301,6 +297,7 @@
       giftBtnVisible = false;
       loopMode = false;
       randomGiftBtn.style.display = 'none';
+      mainVideo.controls = true;
 
       try {
         mainVideo.currentTime = 0;
@@ -314,6 +311,7 @@
       if (!giftBtnVisible && mainVideo.currentTime >= GIFT_SHOW_TIME) {
         randomGiftBtn.style.display = 'block';
         giftBtnVisible = true;
+        mainVideo.controls = false;
       }
 
       if (!loopMode && mainVideo.currentTime >= LOOP_START) {
@@ -356,6 +354,7 @@
     backBtn.addEventListener('click', () => {
       mainVideo.pause();
       mainVideo.currentTime = 0;
+      mainVideo.controls = true;
       giftBtnVisible = false;
       loopMode = false;
       randomGiftBtn.style.display = 'none';
