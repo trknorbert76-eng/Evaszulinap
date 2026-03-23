@@ -52,8 +52,7 @@
       width: 100vw;
       height: 100vh;
       object-fit: contain;
-      pointer-events: none; /* EZ A LÉNYEG */
-    }
+     }
 
     /* LÁTHATATLAN KATT ZÓNA */
     #randomGiftBtn {
@@ -140,10 +139,16 @@ const overlay = document.getElementById('overlay');
 const giftVideo = document.getElementById('giftVideo');
 const closeBtn = document.getElementById('closeBtn');
 
-const VIDEO = "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774195689/utols%C3%B3ok_utols%C3%B3oja_qawodm.mp4";
-
 const gifts = [
-  "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134175/T%C3%B6r%C3%B6k_Norbert_3_vers_a_szerelemr%C5%91l_gm8zu6.mp4"
+  'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134175/T%C3%B6r%C3%B6k_Norbert_3_vers_a_szerelemr%C5%91l_gm8zu6.mp4',
+  'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134156/25_%C3%A9vesen---T%C3%B6r%C3%B6k_Norbert_verse_am6wtk.mp4',
+  'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134159/P%C3%A1rizs_Room_tour_2025_rnchhh.mp4',
+  'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134153/Legszebb----T%C3%B6r%C3%B6k_Norbert_verse_bq7ori.mp4',
+  'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134139/%C3%88v%C3%A1mnak_a_boldogs%C3%A1gr%C3%B3l_T%C3%B6r%C3%B6k_Norbert_verse_kwx2lb.mp4',
+  'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134129/25_H%C3%A1zass%C3%A1gi_%C3%A9vfordul%C3%B3nkra_howpjg.mp4',
+  'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134104/T%C3%B6r%C3%B6k_Norbert_Mindhal%C3%A1lig_wtvuc8.mp4',
+  'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134106/%C3%88vfordul%C3%B3_29._aqqeaq.mp4',
+  'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134099/T%C3%B6r%C3%B6k_Norbert_Ahogy_vagy.._n3ukws.mp4'
 ];
 
 mainVideo.src = VIDEO;
@@ -151,13 +156,15 @@ mainVideo.src = VIDEO;
 playBtn.onclick = async () => {
   startScreen.classList.remove('active');
   videoScreen.classList.add('active');
-
+mainVideo.style.pointerEvents = 'auto';
   await mainVideo.play();
+  
 };
 
 mainVideo.ontimeupdate = () => {
-  if (mainVideo.currentTime > 257) {
+  if (mainVideo.currentTime > 257 && randomBtn.style.display !== 'block') {
     randomBtn.style.display = 'block';
+    mainVideo.style.pointerEvents = 'none';
   }
 };
 
