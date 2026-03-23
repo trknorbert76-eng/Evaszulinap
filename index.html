@@ -314,16 +314,20 @@
     }
   };
 
-  giftCloseBtn.onclick = () => {
-    giftVideo.pause();
-    giftOverlay.classList.remove('show');
-    giftOverlay.classList.remove('withBg');
-  };
+ giftCloseBtn.onclick = () => {
+  giftVideo.pause();
+  giftVideo.currentTime = 0;
+  giftOverlay.classList.remove('show');
+  giftOverlay.classList.remove('withBg');
+  showScreen(startScreen);
+};
 
-  giftVideo.addEventListener('ended', () => {
-    giftOverlay.classList.remove('show');
-    giftOverlay.classList.remove('withBg');
-  });
+giftVideo.addEventListener('ended', () => {
+  giftVideo.currentTime = 0;
+  giftOverlay.classList.remove('show');
+  giftOverlay.classList.remove('withBg');
+  showScreen(startScreen);
+});
 </script>
 
 </body>
