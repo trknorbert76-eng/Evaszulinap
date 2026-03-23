@@ -2,7 +2,7 @@
 <html lang="hu">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Szülinapi projekt</title>
   <style>
     * { box-sizing: border-box; }
@@ -14,6 +14,7 @@
       overflow: hidden;
       background: #000;
       font-family: Georgia, "Times New Roman", serif;
+      touch-action: manipulation;
     }
 
     .screen {
@@ -76,14 +77,23 @@
       z-index: 5;
     }
 
+    #videoScreen {
+      position: fixed;
+      inset: 0;
+      background: #000;
+    }
+
     #mainVideo {
       width: 100vw;
       height: 100vh;
       object-fit: contain;
       background: #000;
+      display: block;
+      position: relative;
+      z-index: 1;
     }
 
-    /* Láthatatlan gomb a "katt ide!" fölé */
+    /* PC-n láthatatlan kattintható terület marad */
     #randomGiftBtn {
       position: fixed;
       left: 50%;
@@ -95,8 +105,12 @@
       border-radius: 24px;
       cursor: pointer;
       background: transparent;
-      z-index: 20;
       display: none;
+      z-index: 9999;
+      pointer-events: auto;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      padding: 0;
     }
 
     .giftOverlay {
@@ -108,7 +122,7 @@
       background: rgba(0,0,0,0.38);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      z-index: 50;
+      z-index: 20000;
       opacity: 0;
       transition: opacity 0.3s ease;
     }
@@ -172,7 +186,7 @@
       position: fixed;
       top: 18px;
       right: 18px;
-      z-index: 100;
+      z-index: 10000;
       width: 48px;
       height: 48px;
       border-radius: 50%;
@@ -182,24 +196,48 @@
       background: rgba(0,0,0,0.6);
       color: white;
       backdrop-filter: blur(4px);
+      -webkit-tap-highlight-color: transparent;
     }
 
+    /* CSAK MOBIL */
     @media (max-width: 700px) {
       #mainVideo {
         width: 100vw;
         height: 100vh;
         object-fit: contain;
-        background: #000;
+      }
+
+      /* Mobilon itt már látszó gomb lesz a végén */
+      #randomGiftBtn {
+        left: 50%;
+        top: 58.5%;
+        width: 230px;
+        height: 110px;
+        border-radius: 0;
+        background: url('kattide.png') center/contain no-repeat;
+        background-color: transparent;
+      }
+
+      .giftBox {
+        width: 94vw;
+        height: 54vh;
+        border-radius: 20px;
       }
 
       #giftVideo {
         object-fit: contain;
+        border-radius: 20px;
       }
 
-      #randomGiftBtn {
-        width: 250px;
-        height: 120px;
-        top: 58%;
+      #closeGiftBtn {
+        width: 42px;
+        height: 42px;
+        font-size: 26px;
+      }
+
+      #backBtn {
+        top: 12px;
+        right: 12px;
       }
     }
   </style>
@@ -214,7 +252,15 @@
   </section>
 
   <section id="videoScreen" class="screen">
-    <video id="mainVideo" playsinline preload="auto" controls controlsList="nodownload noplaybackrate"></video>
+    <video
+      id="mainVideo"
+      playsinline
+      webkit-playsinline
+      preload="auto"
+      controls
+      controlsList="nodownload noplaybackrate nofullscreen"
+      disablePictureInPicture
+    ></video>
   </section>
 
   <button id="randomGiftBtn" aria-label="Ajándék videó"></button>
@@ -222,7 +268,13 @@
   <div id="giftOverlay" class="giftOverlay">
     <div class="giftBox">
       <button id="closeGiftBtn" type="button">×</button>
-      <video id="giftVideo" controls playsinline preload="metadata"></video>
+      <video
+        id="giftVideo"
+        controls
+        playsinline
+        webkit-playsinline
+        preload="metadata"
+      ></video>
     </div>
   </div>
 
@@ -260,12 +312,20 @@
       'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134099/T%C3%B6r%C3%B6k_Norbert_Ahogy_vagy.._n3ukws.mp4'
     ];
 
-    const GIFT_SHOW_TIME = 255; // 4:15
-    const LOOP_START = 257;     // 4:17
-    const LOOP_END = 260;       // 4:20 körül
+    /* PC logika */
+    const PC_GIFT_SHOW_TIME = 255; // 4:15
+    const PC_LOOP_START = 257;     // 4:17
+    const PC_LOOP_END = 260;       // 4:20
+
+    /* Mobil logika */
+    const MOBILE_BLOCK_TIME = 250; // 4:10
+    const MOBILE_GIFT_SHOW_TIME = 257; // 4:17
+    const MOBILE_LOOP_START = 257; // 4:17
+    const MOBILE_LOOP_END = 260;   // 4:20
 
     let giftBtnVisible = false;
     let endMode = false;
+    let mobileBlockMode = false;
 
     mainVideo.src = VIDEO_URL;
 
@@ -285,16 +345,27 @@
       giftOverlay.classList.remove('withBg');
     }
 
-    playBtn.addEventListener('click', async () => {
-      showScreen(videoScreen);
-
+    function resetMainVideoState() {
+      mainVideo.controls = true;
+      mainVideo.style.pointerEvents = 'auto';
+      mainVideo.removeAttribute('tabindex');
       giftBtnVisible = false;
       endMode = false;
+      mobileBlockMode = false;
       randomGiftBtn.style.display = 'none';
+    }
 
+    function lockMobileVideo() {
+      mainVideo.controls = false;
+      mainVideo.style.pointerEvents = 'none';
+      mainVideo.setAttribute('tabindex', '-1');
+      mobileBlockMode = true;
+    }
+
+    playBtn.addEventListener('click', async () => {
+      showScreen(videoScreen);
+      resetMainVideoState();
       closeGiftPopup();
-
-      mainVideo.controls = true;
 
       try {
         mainVideo.currentTime = 0;
@@ -305,29 +376,66 @@
     });
 
     mainVideo.addEventListener('timeupdate', () => {
-      if (!giftBtnVisible && mainVideo.currentTime >= GIFT_SHOW_TIME) {
+      if (isMobile) {
+        /* MOBIL: 4:10-től már ne lehessen a videóhoz nyúlni */
+        if (!mobileBlockMode && mainVideo.currentTime >= MOBILE_BLOCK_TIME) {
+          lockMobileVideo();
+        }
+
+        /* MOBIL: 4:17-től jön a gomb */
+        if (!giftBtnVisible && mainVideo.currentTime >= MOBILE_GIFT_SHOW_TIME) {
+          randomGiftBtn.style.display = 'block';
+          giftBtnVisible = true;
+        }
+
+        /* MOBIL: 4:17 után loop */
+        if (!endMode && mainVideo.currentTime >= MOBILE_LOOP_START) {
+          endMode = true;
+        }
+
+        if (endMode && mainVideo.currentTime >= MOBILE_LOOP_END) {
+          mainVideo.currentTime = MOBILE_LOOP_START;
+          mainVideo.play().catch(() => {});
+        }
+
+        return;
+      }
+
+      /* PC: MINDEN MARAD A MOSTANI MÓDON */
+      if (!giftBtnVisible && mainVideo.currentTime >= PC_GIFT_SHOW_TIME) {
         randomGiftBtn.style.display = 'block';
         giftBtnVisible = true;
       }
 
-      if (!endMode && mainVideo.currentTime >= LOOP_START) {
+      if (!endMode && mainVideo.currentTime >= PC_LOOP_START) {
         endMode = true;
         mainVideo.controls = false;
       }
 
-      if (endMode && mainVideo.currentTime >= LOOP_END) {
-        mainVideo.currentTime = LOOP_START;
+      if (endMode && mainVideo.currentTime >= PC_LOOP_END) {
+        mainVideo.currentTime = PC_LOOP_START;
         mainVideo.play().catch(() => {});
       }
     });
 
     mainVideo.addEventListener('seeking', () => {
-      if (endMode && mainVideo.currentTime > LOOP_START) {
-        mainVideo.currentTime = LOOP_START;
+      if (isMobile) {
+        if (mobileBlockMode && mainVideo.currentTime > MOBILE_BLOCK_TIME) {
+          mainVideo.currentTime = Math.min(mainVideo.currentTime, MOBILE_LOOP_START);
+        }
+        if (endMode && mainVideo.currentTime > MOBILE_LOOP_START) {
+          mainVideo.currentTime = MOBILE_LOOP_START;
+        }
+        return;
+      }
+
+      if (endMode && mainVideo.currentTime > PC_LOOP_START) {
+        mainVideo.currentTime = PC_LOOP_START;
       }
     });
 
-    randomGiftBtn.addEventListener('click', () => {
+    function openGift(e) {
+      if (e) e.preventDefault();
       if (!giftVideos.length) return;
 
       const randomIndex = Math.floor(Math.random() * giftVideos.length);
@@ -344,35 +452,40 @@
       giftVideo.play().catch(err => {
         console.log('A random videó nem indult el automatikusan:', err);
       });
-    });
+    }
+
+    randomGiftBtn.addEventListener('click', openGift);
 
     giftOverlay.addEventListener('click', (e) => {
       if (e.target === giftOverlay) {
         closeGiftPopup();
-        if (endMode) {
-          mainVideo.currentTime = LOOP_START;
+
+        if (isMobile && endMode) {
+          mainVideo.currentTime = MOBILE_LOOP_START;
+        } else if (!isMobile && endMode) {
+          mainVideo.currentTime = PC_LOOP_START;
         }
+
         mainVideo.play().catch(() => {});
       }
     });
 
     closeGiftBtn.addEventListener('click', () => {
       closeGiftPopup();
-      if (endMode) {
-        mainVideo.currentTime = LOOP_START;
+
+      if (isMobile && endMode) {
+        mainVideo.currentTime = MOBILE_LOOP_START;
+      } else if (!isMobile && endMode) {
+        mainVideo.currentTime = PC_LOOP_START;
       }
+
       mainVideo.play().catch(() => {});
     });
 
     backBtn.addEventListener('click', () => {
       mainVideo.pause();
       mainVideo.currentTime = 0;
-
-      giftBtnVisible = false;
-      endMode = false;
-      randomGiftBtn.style.display = 'none';
-      mainVideo.controls = true;
-
+      resetMainVideoState();
       closeGiftPopup();
       showScreen(startScreen);
     });
