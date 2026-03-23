@@ -87,15 +87,16 @@
       cursor: pointer;
       z-index: 20;
       display: none;
+      background: transparent;
     }
 
-    /* 🎯 MOBIL VÉG KÉP */
+    /* MOBIL VÉGKÉP */
     #mobileEndScreen {
       position: fixed;
       inset: 0;
       display: none;
       z-index: 999999;
-      background: url('vege.png') center/cover no-repeat;
+      background: url('vege.png') center center / cover no-repeat;
     }
 
     #mobileEndBtn {
@@ -103,141 +104,279 @@
       left: 50%;
       top: 58%;
       transform: translate(-50%, -50%);
-      width: 260px;
-      height: 120px;
+      width: min(70vw, 320px);
+      height: auto;
       border: none;
       background: transparent;
       cursor: pointer;
+      padding: 0;
     }
 
+    #mobileEndBtn img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* RANDOM AJÁNDÉK OVERLAY */
+    .giftOverlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000000;
+      background: #000;
+    }
+
+    .giftOverlay.show {
+      display: flex;
+    }
+
+    .giftOverlay.withBg {
+      background: url('hatter.png') center center / cover no-repeat;
+    }
+
+    .giftBox {
+      position: relative;
+      width: min(92vw, 900px);
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(0,0,0,0.55);
+    }
+
+    #giftVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+      display: block;
+    }
+
+    #giftCloseBtn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 46px;
+      height: 46px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.65);
+      color: white;
+      font-size: 28px;
+      line-height: 1;
+      cursor: pointer;
+      z-index: 5;
+    }
+
+    @media (max-width: 700px) {
+      .giftBox {
+        width: 92vw;
+        aspect-ratio: 16 / 9;
+      }
+
+      #playBtn {
+        width: 180px;
+        height: 110px;
+        font-size: 28px;
+      }
+    }
   </style>
 </head>
 
 <body>
 
-<section id="startScreen" class="screen active">
-  <div class="coverWrap">
-    <img class="coverImage" src="kezdes.png">
-    <button id="playBtn">PLAY</button>
+  <section id="startScreen" class="screen active">
+    <div class="coverWrap">
+      <img class="coverImage" src="kezdes.png" alt="">
+      <button id="playBtn">PLAY</button>
+    </div>
+  </section>
+
+  <section id="videoScreen" class="screen">
+    <video id="mainVideo" playsinline preload="auto" controls></video>
+  </section>
+
+  <!-- PC-s ajándék gomb -->
+  <button id="randomGiftBtn" aria-label="Ajándék videó"></button>
+
+  <!-- Mobil vége -->
+  <div id="mobileEndScreen">
+    <button id="mobileEndBtn" aria-label="Katt ide">
+      <img src="kattide.png" alt="Katt ide">
+    </button>
   </div>
-</section>
 
-<section id="videoScreen" class="screen">
-  <video id="mainVideo" playsinline preload="auto" controls></video>
-</section>
+  <!-- Random videó overlay -->
+  <div id="giftOverlay" class="giftOverlay">
+    <div class="giftBox">
+      <button id="giftCloseBtn" aria-label="Bezárás">×</button>
+      <video id="giftVideo" playsinline controls preload="auto"></video>
+    </div>
+  </div>
 
-<button id="randomGiftBtn"></button>
+  <script>
+    const isMobile = window.innerWidth <= 700;
 
-<!-- 🎯 MOBIL END -->
-<div id="mobileEndScreen">
-  <button id="mobileEndBtn"></button>
-</div>
+    const mainVideo = document.getElementById('mainVideo');
+    const playBtn = document.getElementById('playBtn');
+    const startScreen = document.getElementById('startScreen');
+    const videoScreen = document.getElementById('videoScreen');
+    const randomGiftBtn = document.getElementById('randomGiftBtn');
 
-<script>
-const isMobile = window.innerWidth <= 700;
+    const mobileEndScreen = document.getElementById('mobileEndScreen');
+    const mobileEndBtn = document.getElementById('mobileEndBtn');
 
-const mainVideo = document.getElementById('mainVideo');
-const playBtn = document.getElementById('playBtn');
-const startScreen = document.getElementById('startScreen');
-const videoScreen = document.getElementById('videoScreen');
-const randomGiftBtn = document.getElementById('randomGiftBtn');
+    const giftOverlay = document.getElementById('giftOverlay');
+    const giftVideo = document.getElementById('giftVideo');
+    const giftCloseBtn = document.getElementById('giftCloseBtn');
 
-const mobileEndScreen = document.getElementById('mobileEndScreen');
-const mobileEndBtn = document.getElementById('mobileEndBtn');
+    const VIDEO_URL =
+      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774195689/utols%C3%B3ok_utols%C3%B3oja_qawodm.mp4?t=" + Date.now();
 
-const VIDEO_URL = "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774195689/utols%C3%B3ok_utols%C3%B3oja_qawodm.mp4?t=" + Date.now();
+    mainVideo.src = VIDEO_URL;
 
-mainVideo.src = VIDEO_URL;
+    /* IDE TEDD BE A 10 RANDOM VIDEÓT */
+    const giftVideos = [
+      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134175/T%C3%B6r%C3%B6k_Norbert_3_vers_a_szerelemr%C5%91l_gm8zu6.mp4",
+      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134156/25_%C3%A9vesen---T%C3%B6r%C3%B6k_Norbert_verse_am6wtk.mp4",
 
-const giftVideos = [
-  'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134175/T%C3%B6r%C3%B6k_Norbert_3_vers_a_szerelemr%C5%91l_gm8zu6.mp4',
-  'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134156/25_%C3%A9vesen---T%C3%B6r%C3%B6k_Norbert_verse_am6wtk.mp4'
-];
+      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO3.mp4",
+      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO4.mp4",
+      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO5.mp4",
+      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO6.mp4",
+      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO7.mp4",
+      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO8.mp4",
+      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO9.mp4",
+      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO10.mp4"
+    ];
 
-const GIFT_SHOW_TIME = 257;
-const LOOP_START = 259;
-const LOOP_END = 260;
-const MOBILE_END_TIME = 255;
+    /* IDŐK */
+    const GIFT_SHOW_TIME_PC = 257;   // 4:17
+    const LOOP_START_PC = 259;       // 4:19
+    const LOOP_END_PC = 260;         // 4:20
+    const MOBILE_END_TIME = 255;     // 4:15
 
-let giftBtnVisible = false;
-let loopMode = false;
-let mobileEndShown = false;
+    let giftBtnVisible = false;
+    let loopMode = false;
+    let mobileEndShown = false;
 
-function showScreen(screen) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  screen.classList.add('active');
-}
+    function showScreen(screen) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      screen.classList.add('active');
+    }
 
-playBtn.addEventListener('click', async () => {
-  showScreen(videoScreen);
+    function resetAll() {
+      giftBtnVisible = false;
+      loopMode = false;
+      mobileEndShown = false;
 
-  giftBtnVisible = false;
-  loopMode = false;
-  mobileEndShown = false;
+      randomGiftBtn.style.display = 'none';
+      mobileEndScreen.style.display = 'none';
+      giftOverlay.classList.remove('show');
+      giftOverlay.classList.remove('withBg');
 
-  mobileEndScreen.style.display = 'none';
-  randomGiftBtn.style.display = 'none';
-
-  mainVideo.currentTime = 0;
-  await mainVideo.play();
-});
-
-mainVideo.addEventListener('timeupdate', () => {
-
-  // 📱 MOBIL
-  if (isMobile) {
-    if (!mobileEndShown && mainVideo.currentTime >= MOBILE_END_TIME) {
-      mobileEndShown = true;
+      giftVideo.pause();
+      giftVideo.removeAttribute('src');
+      giftVideo.load();
 
       mainVideo.pause();
-      mainVideo.removeAttribute('controls');
-      mainVideo.controls = false;
-
-      mobileEndScreen.style.display = 'block';
+      mainVideo.src = VIDEO_URL + "&reset=" + Date.now();
+      mainVideo.load();
     }
-    return;
-  }
 
-  // 💻 PC
-  if (!giftBtnVisible && mainVideo.currentTime >= GIFT_SHOW_TIME) {
-    randomGiftBtn.style.display = 'block';
-    giftBtnVisible = true;
-  }
+    function playRandomGiftVideo() {
+      const randomIndex = Math.floor(Math.random() * giftVideos.length);
+      const chosenVideo = giftVideos[randomIndex];
 
-  if (!loopMode && mainVideo.currentTime >= LOOP_START) {
-    loopMode = true;
-  }
+      mainVideo.pause();
 
-  if (loopMode && mainVideo.currentTime >= LOOP_END) {
-    mainVideo.currentTime = LOOP_START;
-    mainVideo.play();
-  }
-});
+      giftOverlay.classList.add('show');
+      giftOverlay.classList.add('withBg');
 
-// 🎁 MOBIL GOMB
-mobileEndBtn.addEventListener('click', () => {
-  mobileEndScreen.style.display = 'none';
+      giftVideo.src = chosenVideo + (chosenVideo.includes("?") ? "&" : "?") + "t=" + Date.now();
+      giftVideo.load();
+      giftVideo.play().catch(() => {});
+    }
 
-  const randomIndex = Math.floor(Math.random() * giftVideos.length);
-  const chosenVideo = giftVideos[randomIndex];
+    playBtn.addEventListener('click', async () => {
+      showScreen(videoScreen);
 
-  mainVideo.pause();
+      giftBtnVisible = false;
+      loopMode = false;
+      mobileEndShown = false;
 
-  giftOverlay.classList.add('show');
-  giftOverlay.classList.add('withBg');
+      randomGiftBtn.style.display = 'none';
+      mobileEndScreen.style.display = 'none';
+      giftOverlay.classList.remove('show');
+      giftOverlay.classList.remove('withBg');
 
-  giftVideo.src = chosenVideo;
-  giftVideo.style.display = 'block';
-  giftVideo.load();
-  giftVideo.play().catch(() => {});
-});
-// 💻 PC gomb
-randomGiftBtn.addEventListener('click', () => {
-  const randomIndex = Math.floor(Math.random() * giftVideos.length);
-  mainVideo.src = giftVideos[randomIndex];
-  mainVideo.play();
-});
-</script>
+      giftVideo.pause();
+      giftVideo.removeAttribute('src');
+      giftVideo.load();
+
+      mainVideo.currentTime = 0;
+      mainVideo.controls = true;
+
+      try {
+        await mainVideo.play();
+      } catch (e) {
+        console.log(e);
+      }
+    });
+
+    mainVideo.addEventListener('timeupdate', () => {
+      /* MOBIL */
+      if (isMobile) {
+        if (!mobileEndShown && mainVideo.currentTime >= MOBILE_END_TIME) {
+          mobileEndShown = true;
+          mainVideo.pause();
+          mainVideo.controls = false;
+          mobileEndScreen.style.display = 'block';
+        }
+        return;
+      }
+
+      /* PC */
+      if (!giftBtnVisible && mainVideo.currentTime >= GIFT_SHOW_TIME_PC) {
+        randomGiftBtn.style.display = 'block';
+        giftBtnVisible = true;
+      }
+
+      if (!loopMode && mainVideo.currentTime >= LOOP_START_PC) {
+        loopMode = true;
+      }
+
+      if (loopMode && mainVideo.currentTime >= LOOP_END_PC) {
+        mainVideo.currentTime = LOOP_START_PC;
+        mainVideo.play().catch(() => {});
+      }
+    });
+
+    /* MOBIL: katt ide */
+    mobileEndBtn.addEventListener('click', () => {
+      mobileEndScreen.style.display = 'none';
+      playRandomGiftVideo();
+    });
+
+    /* PC: random ajándék */
+    randomGiftBtn.addEventListener('click', () => {
+      playRandomGiftVideo();
+    });
+
+    /* Overlay bezárás */
+    giftCloseBtn.addEventListener('click', () => {
+      giftVideo.pause();
+      giftOverlay.classList.remove('show');
+      giftOverlay.classList.remove('withBg');
+    });
+
+    giftVideo.addEventListener('ended', () => {
+      // maradjon a háttér és a videódoboz, ne ugorjon vissza
+    });
+  </script>
 
 </body>
 </html>
