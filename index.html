@@ -208,15 +208,19 @@
       }
 
       /* Mobilon itt már látszó gomb lesz a végén */
-      #randomGiftBtn {
-        left: 50%;
-        top: 58.5%;
-        width: 230px;
-        height: 110px;
-        border-radius: 0;
-        background: url('kattide.png') center/contain no-repeat;
-        background-color: transparent;
-      }
+     #randomGiftBtn {
+  left: 50%;
+  top: 58.5%;
+  width: 230px;
+  height: 110px;
+  border-radius: 0;
+
+  background: url('kattide.png?v=1') center/contain no-repeat;
+  background-color: transparent;
+
+  z-index: 99999;              /* EZ FONTOS */
+  pointer-events: auto;        /* EZ IS */
+}
 
       .giftBox {
         width: 94vw;
