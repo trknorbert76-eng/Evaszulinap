@@ -74,26 +74,57 @@
       font-weight: bold;
     }
 
-    /* 🎯 MOBIL VÉGE */
-    #mobileEndScreen {
-      position: fixed;
-      inset: 0;
-      display: none;
-      z-index: 999999;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,0.92);
-    }
+/* 🎯 TELJES KÉPERNYŐS VÉGKÉP */
+#mobileEndScreen {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 999999;
+  background: #000;
+}
 
-    .mobileEndWrap {
-      position: relative;
-      width: min(92vw, 420px);
-    }
+.mobileEndWrap {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
 
-    #mobileEndImage {
-      width: 100%;
-      display: block;
-    }
+/* maga a kép kitölti a képernyőt */
+#mobileEndImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* ha vágni akarod: cover */
+  display: block;
+  background: #000;
+}
+
+/* LÁTHATATLAN KATTINTÓ TERÜLET */
+#mobileEndBtn {
+  position: absolute;
+  inset: 0; /* EZ A LÉNYEG → teljes képernyő kattintható */
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#mobileEndBtn {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  transform: translate(-50%, -50%);
+  width: 45%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+#mobileEndBtn img {
+  width: 100%;
+  display: block;
+}
 
     #mobileEndBtn {
       position: absolute;
@@ -175,12 +206,11 @@
 </section>
 
 <!-- MOBIL VÉGE -->
+<!-- MOBIL VÉGE -->
 <div id="mobileEndScreen">
   <div class="mobileEndWrap">
     <img id="mobileEndImage" src="vege.png" alt="">
-    <button id="mobileEndBtn" type="button">
-      <img src="kattide.png" alt="">
-    </button>
+    <button id="mobileEndBtn" type="button" aria-label="Ajándék videó indítása"></button>
   </div>
 </div>
 
