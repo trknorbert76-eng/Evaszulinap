@@ -75,6 +75,7 @@
       background: #000;
     }
 
+    /* PC-s ajándék gomb */
     #randomGiftBtn {
       position: fixed;
       left: 50%;
@@ -96,7 +97,25 @@
       inset: 0;
       display: none;
       z-index: 999999;
-      background: url('vege.png') center center / cover no-repeat;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.92);
+    }
+
+    .mobileEndWrap {
+      position: relative;
+      width: min(92vw, 420px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #mobileEndImage {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
     }
 
     #mobileEndBtn {
@@ -104,8 +123,7 @@
       left: 50%;
       top: 58%;
       transform: translate(-50%, -50%);
-      width: min(70vw, 320px);
-      height: auto;
+      width: 42%;
       border: none;
       background: transparent;
       cursor: pointer;
@@ -172,15 +190,23 @@
     }
 
     @media (max-width: 700px) {
-      .giftBox {
-        width: 92vw;
-        aspect-ratio: 16 / 9;
-      }
-
       #playBtn {
         width: 180px;
         height: 110px;
         font-size: 28px;
+      }
+
+      .giftBox {
+        width: 92vw;
+        max-width: 92vw;
+        aspect-ratio: 16 / 9;
+        border-radius: 14px;
+      }
+
+      #giftCloseBtn {
+        width: 42px;
+        height: 42px;
+        font-size: 24px;
       }
     }
   </style>
@@ -199,17 +225,17 @@
     <video id="mainVideo" playsinline preload="auto" controls></video>
   </section>
 
-  <!-- PC-s ajándék gomb -->
   <button id="randomGiftBtn" aria-label="Ajándék videó"></button>
 
-  <!-- Mobil vége -->
   <div id="mobileEndScreen">
-    <button id="mobileEndBtn" aria-label="Katt ide">
-      <img src="kattide.png" alt="Katt ide">
-    </button>
+    <div class="mobileEndWrap">
+      <img id="mobileEndImage" src="vege.png" alt="">
+      <button id="mobileEndBtn" aria-label="Katt ide">
+        <img src="kattide.png" alt="Katt ide">
+      </button>
+    </div>
   </div>
 
-  <!-- Random videó overlay -->
   <div id="giftOverlay" class="giftOverlay">
     <div class="giftBox">
       <button id="giftCloseBtn" aria-label="Bezárás">×</button>
@@ -222,7 +248,6 @@
 
     const mainVideo = document.getElementById('mainVideo');
     const playBtn = document.getElementById('playBtn');
-    const startScreen = document.getElementById('startScreen');
     const videoScreen = document.getElementById('videoScreen');
     const randomGiftBtn = document.getElementById('randomGiftBtn');
 
@@ -236,24 +261,18 @@
     const VIDEO_URL =
       "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774195689/utols%C3%B3ok_utols%C3%B3oja_qawodm.mp4?t=" + Date.now();
 
-    mainVideo.src = VIDEO_URL;
-
-    /* IDE TEDD BE A 10 RANDOM VIDEÓT */
     const giftVideos = [
-      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134175/T%C3%B6r%C3%B6k_Norbert_3_vers_a_szerelemr%C5%91l_gm8zu6.mp4",
-      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134156/25_%C3%A9vesen---T%C3%B6r%C3%B6k_Norbert_verse_am6wtk.mp4",
-
-      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO3.mp4",
-      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO4.mp4",
-      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO5.mp4",
-      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO6.mp4",
-      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO7.mp4",
-      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO8.mp4",
-      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO9.mp4",
-      "https://res.cloudinary.com/dgcumjeuj/video/upload/v1/VIDEO10.mp4"
+      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134175/T%C3%B6r%C3%B6k_Norbert_3_vers_a_szerelemr%C5%91l_gm8zu6.mp4',
+      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134156/25_%C3%A9vesen---T%C3%B6r%C3%B6k_Norbert_verse_am6wtk.mp4',
+      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134159/P%C3%A1rizs_Room_tour_2025_rnchhh.mp4',
+      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134153/Legszebb----T%C3%B6r%C3%B6k_Norbert_verse_bq7ori.mp4',
+      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134139/%C3%88v%C3%A1mnak_a_boldogs%C3%A1gr%C3%B3l_T%C3%B6r%C3%B6k_Norbert_verse_kwx2lb.mp4',
+      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134129/25_H%C3%A1zass%C3%A1gi_%C3%A9vfordul%C3%B3nkra_howpjg.mp4',
+      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134104/T%C3%B6r%C3%B6k_Norbert_Mindhal%C3%A1lig_wtvuc8.mp4',
+      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134106/%C3%88vfordul%C3%B3_29._aqqeaq.mp4',
+      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134099/T%C3%B6r%C3%B6k_Norbert_Ahogy_vagy.._n3ukws.mp4'
     ];
 
-    /* IDŐK */
     const GIFT_SHOW_TIME_PC = 257;   // 4:17
     const LOOP_START_PC = 259;       // 4:19
     const LOOP_END_PC = 260;         // 4:20
@@ -262,41 +281,32 @@
     let giftBtnVisible = false;
     let loopMode = false;
     let mobileEndShown = false;
+    let overlayOpened = false;
 
     function showScreen(screen) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       screen.classList.add('active');
     }
 
-    function resetAll() {
-      giftBtnVisible = false;
-      loopMode = false;
-      mobileEndShown = false;
-
-      randomGiftBtn.style.display = 'none';
-      mobileEndScreen.style.display = 'none';
-      giftOverlay.classList.remove('show');
-      giftOverlay.classList.remove('withBg');
-
-      giftVideo.pause();
-      giftVideo.removeAttribute('src');
-      giftVideo.load();
-
-      mainVideo.pause();
-      mainVideo.src = VIDEO_URL + "&reset=" + Date.now();
-      mainVideo.load();
+    function pickRandomGiftVideo() {
+      const randomIndex = Math.floor(Math.random() * giftVideos.length);
+      return giftVideos[randomIndex];
     }
 
-    function playRandomGiftVideo() {
-      const randomIndex = Math.floor(Math.random() * giftVideos.length);
-      const chosenVideo = giftVideos[randomIndex];
+    function openGiftOverlay() {
+      if (overlayOpened) return;
+      overlayOpened = true;
+
+      const chosenVideo = pickRandomGiftVideo();
 
       mainVideo.pause();
+      mainVideo.controls = false;
 
       giftOverlay.classList.add('show');
       giftOverlay.classList.add('withBg');
 
-      giftVideo.src = chosenVideo + (chosenVideo.includes("?") ? "&" : "?") + "t=" + Date.now();
+      giftVideo.pause();
+      giftVideo.src = chosenVideo + (chosenVideo.includes('?') ? '&' : '?') + 't=' + Date.now();
       giftVideo.load();
       giftVideo.play().catch(() => {});
     }
@@ -307,6 +317,7 @@
       giftBtnVisible = false;
       loopMode = false;
       mobileEndShown = false;
+      overlayOpened = false;
 
       randomGiftBtn.style.display = 'none';
       mobileEndScreen.style.display = 'none';
@@ -317,6 +328,8 @@
       giftVideo.removeAttribute('src');
       giftVideo.load();
 
+      mainVideo.src = VIDEO_URL + '&start=' + Date.now();
+      mainVideo.load();
       mainVideo.currentTime = 0;
       mainVideo.controls = true;
 
@@ -328,17 +341,15 @@
     });
 
     mainVideo.addEventListener('timeupdate', () => {
-      /* MOBIL */
-      if (!mobileEndShown && mainVideo.currentTime >= MOBILE_END_TIME) {
-  mobileEndShown = true;
+      if (isMobile) {
+        if (!mobileEndShown && mainVideo.currentTime >= MOBILE_END_TIME) {
+          mobileEndShown = true;
+          mainVideo.controls = false;
+          mobileEndScreen.style.display = 'flex';
+        }
+        return;
+      }
 
-  mainVideo.controls = false;
-
-  // videó megy tovább, csak eltakarjuk
-  mobileEndScreen.style.display = 'block';
-}
-
-      /* PC */
       if (!giftBtnVisible && mainVideo.currentTime >= GIFT_SHOW_TIME_PC) {
         randomGiftBtn.style.display = 'block';
         giftBtnVisible = true;
@@ -354,26 +365,19 @@
       }
     });
 
-    /* MOBIL: katt ide */
     mobileEndBtn.addEventListener('click', () => {
       mobileEndScreen.style.display = 'none';
-      playRandomGiftVideo();
+      openGiftOverlay();
     });
 
-    /* PC: random ajándék */
     randomGiftBtn.addEventListener('click', () => {
-      playRandomGiftVideo();
+      openGiftOverlay();
     });
 
-    /* Overlay bezárás */
     giftCloseBtn.addEventListener('click', () => {
       giftVideo.pause();
       giftOverlay.classList.remove('show');
       giftOverlay.classList.remove('withBg');
-    });
-
-    giftVideo.addEventListener('ended', () => {
-      // maradjon a háttér és a videódoboz, ne ugorjon vissza
     });
   </script>
 
