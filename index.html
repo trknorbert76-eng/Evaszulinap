@@ -104,6 +104,7 @@
       border: none;
       background: transparent;
       cursor: pointer;
+      padding: 0;
     }
 
     #mobileEndBtn img {
@@ -130,15 +131,17 @@
     }
 
     .giftBox {
+      position: relative;
       width: min(92vw, 900px);
       aspect-ratio: 16 / 9;
       border-radius: 16px;
       overflow: hidden;
       background: #000;
+      box-shadow: 0 0 40px rgba(0,0,0,0.65);
     }
 
     #giftCloseBtn {
-      position: absolute;
+      position: fixed;
       top: 12px;
       right: 12px;
       width: 46px;
@@ -149,8 +152,8 @@
       border: none;
       font-size: 26px;
       cursor: pointer;
+      z-index: 1000001;
     }
-
   </style>
 </head>
 
@@ -159,113 +162,138 @@
 <!-- START -->
 <section id="startScreen" class="screen active">
   <div class="coverWrap">
-    <img class="coverImage" src="kezdes.png">
-    <button id="playBtn">PLAY</button>
+    <img class="coverImage" src="kezdes.png" alt="">
+    <button id="playBtn" type="button">PLAY</button>
   </div>
 </section>
 
 <!-- VIDEÓ -->
 <section id="videoScreen" class="screen">
   <div class="videoFrame">
-   <video id="mainVideo" playsinline webkit-playsinline preload="auto"></video>
+    <video id="mainVideo" playsinline webkit-playsinline preload="auto" controls></video>
   </div>
 </section>
 
 <!-- MOBIL VÉGE -->
 <div id="mobileEndScreen">
   <div class="mobileEndWrap">
-    <img id="mobileEndImage" src="vege.png">
-    <button id="mobileEndBtn">
-      <img src="kattide.png">
+    <img id="mobileEndImage" src="vege.png" alt="">
+    <button id="mobileEndBtn" type="button">
+      <img src="kattide.png" alt="">
     </button>
   </div>
 </div>
 
 <!-- AJÁNDÉK -->
 <div id="giftOverlay" class="giftOverlay">
-  <button id="giftCloseBtn">×</button>
+  <button id="giftCloseBtn" type="button">×</button>
   <div class="giftBox">
-    <video id="giftVideo" playsinline webkit-playsinline></video>
+    <video id="giftVideo" playsinline webkit-playsinline controls></video>
   </div>
 </div>
 
 <script>
+  const mainVideo = document.getElementById('mainVideo');
+  const playBtn = document.getElementById('playBtn');
+  const startScreen = document.getElementById('startScreen');
+  const videoScreen = document.getElementById('videoScreen');
 
-const mainVideo = document.getElementById('mainVideo');
-const playBtn = document.getElementById('playBtn');
-const startScreen = document.getElementById('startScreen');
-const videoScreen = document.getElementById('videoScreen');
+  const mobileEndScreen = document.getElementById('mobileEndScreen');
+  const mobileEndBtn = document.getElementById('mobileEndBtn');
 
-const mobileEndScreen = document.getElementById('mobileEndScreen');
-const mobileEndBtn = document.getElementById('mobileEndBtn');
+  const giftOverlay = document.getElementById('giftOverlay');
+  const giftVideo = document.getElementById('giftVideo');
+  const giftCloseBtn = document.getElementById('giftCloseBtn');
 
-const giftOverlay = document.getElementById('giftOverlay');
-const giftVideo = document.getElementById('giftVideo');
-const giftCloseBtn = document.getElementById('giftCloseBtn');
+  const VIDEO_URL = "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774195689/utols%C3%B3ok_utols%C3%B3oja_qawodm.mp4";
 
-const VIDEO_URL = "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774195689/utols%C3%B3ok_utols%C3%B3oja_qawodm.mp4";
+  const giftVideos = [
+    'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134175/T%C3%B6r%C3%B6k_Norbert_3_vers_a_szerelemr%C5%91l_gm8zu6.mp4',
+    'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134156/25_%C3%A9vesen---T%C3%B6r%C3%B6k_Norbert_verse_am6wtk.mp4',
+    'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134159/P%C3%A1rizs_Room_tour_2025_rnchhh.mp4',
+    'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134153/Legszebb----T%C3%B6r%C3%B6k_Norbert_verse_bq7ori.mp4',
+    'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134139/%C3%88v%C3%A1mnak_a_boldogs%C3%A1gr%C3%B3l_T%C3%B6r%C3%B6k_Norbert_verse_kwx2lb.mp4',
+    'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134129/25_H%C3%A1zass%C3%A1gi_%C3%A9vfordul%C3%B3nkra_howpjg.mp4',
+    'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134104/T%C3%B6r%C3%B6k_Norbert_Mindhal%C3%A1lig_wtvuc8.mp4',
+    'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134106/%C3%88vfordul%C3%B3_29._aqqeaq.mp4',
+    'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134099/T%C3%B6r%C3%B6k_Norbert_Ahogy_vagy.._n3ukws.mp4'
+  ];
 
-const giftVideos = [
-'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134175/T%C3%B6r%C3%B6k_Norbert_3_vers_a_szerelemr%C5%91l_gm8zu6.mp4',
-'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134156/25_%C3%A9vesen---T%C3%B6r%C3%B6k_Norbert_verse_am6wtk.mp4',
-'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134159/P%C3%A1rizs_Room_tour_2025_rnchhh.mp4',
-'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134153/Legszebb----T%C3%B6r%C3%B6k_Norbert_verse_bq7ori.mp4',
-'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134139/%C3%88v%C3%A1mnak_a_boldogs%C3%A1gr%C3%B3l_T%C3%B6r%C3%B6k_Norbert_verse_kwx2lb.mp4',
-'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134129/25_H%C3%A1zass%C3%A1gi_%C3%A9vfordul%C3%B3nkra_howpjg.mp4',
-'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134104/T%C3%B6r%C3%B6k_Norbert_Mindhal%C3%A1lig_wtvuc8.mp4',
-'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134106/%C3%88vfordul%C3%B3_29._aqqeaq.mp4',
-'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134099/T%C3%B6r%C3%B6k_Norbert_Ahogy_vagy.._n3ukws.mp4'
-];
+  const END_TIME = 255; // 4:15
+  let endShown = false;
 
-const END_TIME = 255; // 4:15
-
-function showScreen(screen) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  screen.classList.add('active');
-}
-
-playBtn.onclick = async () => {
-  showScreen(videoScreen);
-  mainVideo.src = VIDEO_URL + "?t=" + Date.now();
-  await mainVideo.play();
-};
-
-mainVideo.addEventListener('timeupdate', () => {
-  if (mainVideo.currentTime >= END_TIME) {
-    mainVideo.pause();
-
-    // fő videó teljes eltüntetése
-    videoScreen.classList.remove('active');
-    videoScreen.style.display = 'none';
-
-    // végekép mutatása
-    mobileEndScreen.style.display = 'flex';
+  function showScreen(screen) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    screen.classList.add('active');
   }
-});
 
-playBtn.onclick = async () => {
-  mobileEndScreen.style.display = 'none';
-  giftOverlay.classList.remove('show');
-  giftOverlay.classList.remove('withBg');
-
-  videoScreen.style.display = 'flex';
-  showScreen(videoScreen);
-
-  mainVideo.src = VIDEO_URL + "?t=" + Date.now();
-  mainVideo.load();
-
-  try {
-    await mainVideo.play();
-  } catch (e) {
-    console.log(e);
+  function getRandomGiftVideo() {
+    const index = Math.floor(Math.random() * giftVideos.length);
+    return giftVideos[index];
   }
-};
 
-giftCloseBtn.onclick = () => {
-  giftOverlay.classList.remove('show');
-  giftVideo.pause();
-};
+  playBtn.onclick = async () => {
+    endShown = false;
+    mobileEndScreen.style.display = 'none';
+    giftOverlay.classList.remove('show', 'withBg');
+    giftVideo.pause();
+    giftVideo.removeAttribute('src');
+    giftVideo.load();
 
+    videoScreen.style.display = 'flex';
+    showScreen(videoScreen);
+
+    mainVideo.src = VIDEO_URL + "?t=" + Date.now();
+    mainVideo.load();
+
+    try {
+      await mainVideo.play();
+    } catch (e) {
+      console.log("Main video play hiba:", e);
+    }
+  };
+
+  mainVideo.addEventListener('timeupdate', () => {
+    if (!endShown && mainVideo.currentTime >= END_TIME) {
+      endShown = true;
+      mainVideo.pause();
+
+      videoScreen.classList.remove('active');
+      videoScreen.style.display = 'none';
+
+      mobileEndScreen.style.display = 'flex';
+    }
+  });
+
+  mobileEndBtn.onclick = async () => {
+    const randomVideo = getRandomGiftVideo();
+
+    mobileEndScreen.style.display = 'none';
+
+    giftOverlay.classList.add('show');
+    giftOverlay.classList.add('withBg');
+
+    giftVideo.pause();
+    giftVideo.src = randomVideo + "?t=" + Date.now();
+    giftVideo.load();
+
+    try {
+      await giftVideo.play();
+    } catch (e) {
+      console.log("Gift video play hiba:", e);
+    }
+  };
+
+  giftCloseBtn.onclick = () => {
+    giftVideo.pause();
+    giftOverlay.classList.remove('show');
+    giftOverlay.classList.remove('withBg');
+  };
+
+  giftVideo.addEventListener('ended', () => {
+    giftOverlay.classList.remove('show');
+    giftOverlay.classList.remove('withBg');
+  });
 </script>
 
 </body>
