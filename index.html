@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Boldog szülinapot Èva!</title>
+  <title>Szülinapi projekt</title>
   <style>
     * { box-sizing: border-box; }
 
@@ -76,26 +76,36 @@
       z-index: 5;
     }
 
-    #mainVideo {
-      width: 100vw;
-      height: 100vh;
-      object-fit: contain;
+    .videoWrap {
+      position: fixed;
+      inset: 0;
       background: #000;
-      pointer-events: none;
+      overflow: hidden;
     }
 
+    #mainVideo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+      z-index: 1;
+    }
+
+    /* Láthatatlan katt zóna a videó fölött */
     #randomGiftBtn {
-      position: fixed;
+      position: absolute;
       left: 50%;
       top: 57.5%;
       transform: translate(-50%, -50%);
-      width: 170px;
-      height: 95px;
+      width: 190px;
+      height: 105px;
       border: none;
-      cursor: pointer;
       background: transparent;
-      z-index: 99999;
+      cursor: pointer;
       display: none;
+      z-index: 20;
       pointer-events: auto;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
@@ -187,13 +197,6 @@
     }
 
     @media (max-width: 700px) {
-      #mainVideo {
-        width: 100vw;
-        height: 100vh;
-        object-fit: contain;
-        background: #000;
-      }
-
       #giftVideo {
         object-fit: contain;
       }
@@ -201,10 +204,9 @@
 
     @media (max-width: 900px) and (orientation: landscape) {
       #randomGiftBtn {
-        left: 50%;
         top: 60%;
-        width: 200px;
-        height: 110px;
+        width: 210px;
+        height: 115px;
       }
     }
   </style>
@@ -219,10 +221,11 @@
   </section>
 
   <section id="videoScreen" class="screen">
-    <video id="mainVideo" playsinline preload="auto" controls></video>
+    <div class="videoWrap" id="videoWrap">
+      <video id="mainVideo" playsinline preload="auto" controls></video>
+      <button id="randomGiftBtn" aria-label="Ajándék videó"></button>
+    </div>
   </section>
-
-  <button id="randomGiftBtn" aria-label="Ajándék videó"></button>
 
   <div id="giftOverlay" class="giftOverlay">
     <div class="giftBox">
@@ -265,9 +268,9 @@
       'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134099/T%C3%B6r%C3%B6k_Norbert_Ahogy_vagy.._n3ukws.mp4'
     ];
 
-    const GIFT_SHOW_TIME = 257;   // 4:17
-    const LOOP_START = 259;       // 4:19
-    const LOOP_END = 260;         // 4:20
+    const GIFT_SHOW_TIME = 257;
+    const LOOP_START = 259;
+    const LOOP_END = 260;
 
     let giftBtnVisible = false;
     let loopMode = false;
@@ -309,8 +312,8 @@
 
     mainVideo.addEventListener('timeupdate', () => {
       if (!giftBtnVisible && mainVideo.currentTime >= GIFT_SHOW_TIME) {
-        randomGiftBtn.style.display = 'block';
         giftBtnVisible = true;
+        randomGiftBtn.style.display = 'block';
         mainVideo.controls = false;
       }
 
@@ -324,7 +327,10 @@
       }
     });
 
-    randomGiftBtn.addEventListener('click', () => {
+    randomGiftBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
       if (!giftVideos.length) return;
 
       const randomIndex = Math.floor(Math.random() * giftVideos.length);
