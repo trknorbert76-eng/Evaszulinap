@@ -132,12 +132,11 @@ const playBtn = document.getElementById('playBtn');
 const mainVideo = document.getElementById('mainVideo');
 const randomBtn = document.getElementById('randomGiftBtn');
 
-const startScreen = document.getElementById('startScreen');
-const videoScreen = document.getElementById('videoScreen');
-
 const overlay = document.getElementById('overlay');
 const giftVideo = document.getElementById('giftVideo');
 const closeBtn = document.getElementById('closeBtn');
+
+const VIDEO = "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774195689/utols%C3%B3ok_utols%C3%B3oja_qawodm.mp4";
 
 const gifts = [
   'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134175/T%C3%B6r%C3%B6k_Norbert_3_vers_a_szerelemr%C5%91l_gm8zu6.mp4',
@@ -171,9 +170,10 @@ mainVideo.ontimeupdate = () => {
 randomBtn.onclick = () => {
   mainVideo.pause();
 
-  giftVideo.src = gifts[0];
-  overlay.style.display = 'flex';
+  const randomIndex = Math.floor(Math.random() * gifts.length);
+  giftVideo.src = gifts[randomIndex];
 
+  overlay.style.display = 'flex';
   giftVideo.play();
 };
 
