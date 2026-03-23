@@ -329,15 +329,14 @@
 
     mainVideo.addEventListener('timeupdate', () => {
       /* MOBIL */
-      if (isMobile) {
-        if (!mobileEndShown && mainVideo.currentTime >= MOBILE_END_TIME) {
-          mobileEndShown = true;
-          mainVideo.pause();
-          mainVideo.controls = false;
-          mobileEndScreen.style.display = 'block';
-        }
-        return;
-      }
+      if (!mobileEndShown && mainVideo.currentTime >= MOBILE_END_TIME) {
+  mobileEndShown = true;
+
+  mainVideo.controls = false;
+
+  // videó megy tovább, csak eltakarjuk
+  mobileEndScreen.style.display = 'block';
+}
 
       /* PC */
       if (!giftBtnVisible && mainVideo.currentTime >= GIFT_SHOW_TIME_PC) {
