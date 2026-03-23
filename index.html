@@ -84,22 +84,21 @@
     }
 
     #randomGiftBtn {
-      position: fixed;
-      left: 50%;
-      top: 57.5%;
-      transform: translate(-50%, -50%);
-      width: 165px;
-      height: 92px;
-      border: none;
-      border-radius: 999px;
-      cursor: pointer;
-      background: rgba(255,255,255,0.02);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), 0 0 18px rgba(0,0,0,0.18);
-      backdrop-filter: blur(1px);
-      z-index: 20;
-      display: none;
-      animation: pulse 1.5s infinite;
-    }
+  position: fixed;
+  left: 50%;
+  top: 57.5%;
+  transform: translate(-50%, -50%);
+  width: 170px;
+  height: 95px;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  z-index: 9999;
+  display: none;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
 
     @keyframes pulse {
       0%   { transform: translate(-50%, -50%) scale(1); }
@@ -204,6 +203,14 @@
         object-fit: contain;
       }
     }
+    @media (max-width: 900px) and (orientation: landscape) {
+  #randomGiftBtn {
+    left: 50%;
+    top: 60%;
+    width: 200px;
+    height: 110px;
+  }
+}
   </style>
 </head>
 <body>
