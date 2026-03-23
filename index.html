@@ -232,8 +232,14 @@ playBtn.onclick = async () => {
 
 mainVideo.addEventListener('timeupdate', () => {
   if (mainVideo.currentTime >= END_TIME) {
-    mobileEndScreen.style.display = 'flex';
     mainVideo.pause();
+
+    // fő videó teljes eltüntetése
+    videoScreen.classList.remove('active');
+    videoScreen.style.display = 'none';
+
+    // végekép mutatása
+    mobileEndScreen.style.display = 'flex';
   }
 });
 
