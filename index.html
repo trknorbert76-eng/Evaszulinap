@@ -30,7 +30,6 @@
       display: flex;
     }
 
-    /* 🎬 VIDEÓ DOBOZ */
     .videoFrame {
       width: min(96vw, 1200px);
       aspect-ratio: 16 / 9;
@@ -48,7 +47,6 @@
       background: #000;
     }
 
-    /* 🎬 START */
     .coverWrap {
       position: relative;
       width: min(1100px, 88vw);
@@ -74,76 +72,100 @@
       font-weight: bold;
     }
 
-/* 🎯 TELJES KÉPERNYŐS VÉGKÉP */
-#mobileEndScreen {
-  position: fixed;
-  inset: 0;
-  display: none;
-  z-index: 999999;
-  background: #000;
-}
+    #mobileEndScreen {
+      position: fixed;
+      inset: 0;
+      display: none;
+      z-index: 999999;
+      background: #000;
+    }
 
-.mobileEndWrap {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-}
+    .mobileEndWrap {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
 
-/* maga a kép kitölti a képernyőt */
-#mobileEndImage {
-  width: 100%;
-  height: 100%;
-  object-fit: contain; /* ha vágni akarod: cover */
-  display: block;
-  background: #000;
-}
+    #mobileEndImage {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: #000;
+    }
 
-/* LÁTHATATLAN KATTINTÓ TERÜLET */
-#mobileEndBtn {
-  position: absolute;
-  inset: 0; /* EZ A LÉNYEG → teljes képernyő kattintható */
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  padding: 0;
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-#mobileEndBtn {
-  position: absolute;
-  left: 50%;
-  top: 58%;
-  transform: translate(-50%, -50%);
-  width: 45%;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
-
-#mobileEndBtn img {
-  width: 100%;
-  display: block;
-}
-
-    #mobileEndBtn {
+    .pinPanel {
       position: absolute;
       left: 50%;
-      top: 58%;
+      top: 68%;
       transform: translate(-50%, -50%);
-      width: 45%;
+      width: min(90vw, 760px);
+      padding: 18px 20px 20px;
+      text-align: center;
+      background: rgba(0,0,0,0.45);
+      border-radius: 18px;
+      backdrop-filter: blur(3px);
+    }
+
+    .pinTitle {
+      color: #fff;
+      font-size: clamp(18px, 2vw, 28px);
+      line-height: 1.35;
+      margin-bottom: 16px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.45);
+    }
+
+    .pinInputs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .pinDigit {
+      width: 58px;
+      height: 64px;
+      text-align: center;
+      font-size: 34px;
+      border: 2px solid rgba(255,255,255,0.9);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.95);
+      color: #111;
+      outline: none;
+    }
+
+    .pinDigit:focus {
+      border-color: #ffd27a;
+      box-shadow: 0 0 0 3px rgba(255,210,122,0.25);
+    }
+
+    .pinActions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    #continueBtn {
       border: none;
-      background: transparent;
+      border-radius: 12px;
+      padding: 12px 30px;
+      font-size: 20px;
       cursor: pointer;
-      padding: 0;
+      background: rgba(255,255,255,0.92);
+      color: #111;
+      font-weight: bold;
     }
 
-    #mobileEndBtn img {
-      width: 100%;
-      display: block;
+    #pinMessage {
+      min-height: 28px;
+      margin-top: 14px;
+      color: #fff7cf;
+      font-size: clamp(18px, 1.8vw, 26px);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.45);
     }
 
-    /* 🎁 AJÁNDÉK */
     .giftOverlay {
       position: fixed;
       inset: 0;
@@ -162,16 +184,16 @@
     }
 
     .giftBox {
-  position: absolute;
-  left: 10%;
-  top: 22%;
-  width: min(45vw, 460px);
-  aspect-ratio: 16 / 9;
-  border-radius: 4px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-}
+      position: absolute;
+      left: 10%;
+      top: 22%;
+      width: min(45vw, 460px);
+      aspect-ratio: 16 / 9;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    }
 
     #giftCloseBtn {
       position: fixed;
@@ -187,12 +209,32 @@
       cursor: pointer;
       z-index: 1000001;
     }
+
+    @media (max-width: 900px) {
+      .pinPanel {
+        top: 72%;
+        width: min(94vw, 620px);
+        padding: 14px 14px 16px;
+      }
+
+      .pinDigit {
+        width: 50px;
+        height: 58px;
+        font-size: 28px;
+      }
+
+      .giftBox {
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: min(90vw, 760px);
+      }
+    }
   </style>
 </head>
 
 <body>
 
-<!-- START -->
 <section id="startScreen" class="screen active">
   <div class="coverWrap">
     <img class="coverImage" src="kezdes.png" alt="">
@@ -200,23 +242,38 @@
   </div>
 </section>
 
-<!-- VIDEÓ -->
 <section id="videoScreen" class="screen">
   <div class="videoFrame">
     <video id="mainVideo" playsinline webkit-playsinline preload="auto" controls></video>
   </div>
 </section>
 
-<!-- MOBIL VÉGE -->
-<!-- MOBIL VÉGE -->
 <div id="mobileEndScreen">
   <div class="mobileEndWrap">
     <img id="mobileEndImage" src="vege.png" alt="">
-    <button id="mobileEndBtn" type="button" aria-label="Ajándék videó indítása"></button>
+
+    <div id="pinPanel" class="pinPanel">
+      <div class="pinTitle">
+        Ha Török Éva vagy, írd be a kódot.<br>
+        Vagy válaszd a Tovább gombot.
+      </div>
+
+      <div class="pinInputs">
+        <input id="digit1" class="pinDigit" type="text" inputmode="numeric" maxlength="1" autocomplete="off">
+        <input id="digit2" class="pinDigit" type="text" inputmode="numeric" maxlength="1" autocomplete="off">
+        <input id="digit3" class="pinDigit" type="text" inputmode="numeric" maxlength="1" autocomplete="off">
+        <input id="digit4" class="pinDigit" type="text" inputmode="numeric" maxlength="1" autocomplete="off">
+      </div>
+
+      <div class="pinActions">
+        <button id="continueBtn" type="button">Tovább</button>
+      </div>
+
+      <div id="pinMessage"></div>
+    </div>
   </div>
 </div>
 
-<!-- AJÁNDÉK -->
 <div id="giftOverlay" class="giftOverlay">
   <button id="giftCloseBtn" type="button">×</button>
   <div class="giftBox">
@@ -231,13 +288,23 @@
   const videoScreen = document.getElementById('videoScreen');
 
   const mobileEndScreen = document.getElementById('mobileEndScreen');
-  const mobileEndBtn = document.getElementById('mobileEndBtn');
+
+  const pinPanel = document.getElementById('pinPanel');
+  const continueBtn = document.getElementById('continueBtn');
+  const pinMessage = document.getElementById('pinMessage');
+
+  const digit1 = document.getElementById('digit1');
+  const digit2 = document.getElementById('digit2');
+  const digit3 = document.getElementById('digit3');
+  const digit4 = document.getElementById('digit4');
+  const pinInputs = [digit1, digit2, digit3, digit4];
 
   const giftOverlay = document.getElementById('giftOverlay');
   const giftVideo = document.getElementById('giftVideo');
   const giftCloseBtn = document.getElementById('giftCloseBtn');
 
   const VIDEO_URL = "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774195689/utols%C3%B3ok_utols%C3%B3oja_qawodm.mp4";
+  const WORKER_URL = "https://shy-hall-764d.trknorbert76.workers.dev";
 
   const giftVideos = [
     'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134175/T%C3%B6r%C3%B6k_Norbert_3_vers_a_szerelemr%C5%91l_gm8zu6.mp4',
@@ -251,7 +318,7 @@
     'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134099/T%C3%B6r%C3%B6k_Norbert_Ahogy_vagy.._n3ukws.mp4'
   ];
 
-  const END_TIME = 255; // 4:15
+  const END_TIME = 255;
   let endShown = false;
 
   function showScreen(screen) {
@@ -264,6 +331,90 @@
     return giftVideos[index];
   }
 
+  function resetPinUI() {
+    pinInputs.forEach(input => input.value = "");
+    pinMessage.textContent = "";
+    pinPanel.style.display = "block";
+  }
+
+  async function startSelectedVideo(videoUrl) {
+    pinPanel.style.display = "none";
+    mobileEndScreen.style.display = "none";
+
+    giftOverlay.classList.add('show');
+    giftOverlay.classList.add('withBg');
+
+    giftVideo.pause();
+    giftVideo.src = videoUrl + "?t=" + Date.now();
+    giftVideo.load();
+
+    try {
+      await giftVideo.play();
+    } catch (e) {
+      console.log("Video play hiba:", e);
+    }
+  }
+
+  async function handlePinSubmit() {
+    const code = pinInputs.map(input => input.value).join('').trim();
+
+    if (!code) {
+      pinMessage.textContent = "";
+      startSelectedVideo(getRandomGiftVideo());
+      return;
+    }
+
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ code })
+      });
+
+      const data = await res.json();
+
+      if (data.ok && data.video) {
+        pinMessage.textContent = "Szia Éva, boldog szülinapot!";
+
+        setTimeout(() => {
+          pinMessage.textContent = "";
+          startSelectedVideo(data.video);
+        }, 1200);
+      } else {
+        pinMessage.textContent = "Te kis huncut!";
+      }
+    } catch (err) {
+      console.log("Worker hiba:", err);
+      pinMessage.textContent = "Te kis huncut!";
+    }
+  }
+
+  pinInputs.forEach((input, index) => {
+    input.addEventListener("input", () => {
+      input.value = input.value.replace(/\D/g, "").slice(0, 1);
+
+      if (input.value && index < pinInputs.length - 1) {
+        pinInputs[index + 1].focus();
+      }
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !input.value && index > 0) {
+        pinInputs[index - 1].focus();
+      }
+
+      if (e.key === "Enter") {
+        handlePinSubmit();
+      }
+    });
+  });
+
+  continueBtn.onclick = () => {
+    handlePinSubmit();
+  };
+
   playBtn.onclick = async () => {
     endShown = false;
     mobileEndScreen.style.display = 'none';
@@ -271,6 +422,7 @@
     giftVideo.pause();
     giftVideo.removeAttribute('src');
     giftVideo.load();
+    resetPinUI();
 
     videoScreen.style.display = 'flex';
     showScreen(videoScreen);
@@ -293,43 +445,24 @@
       videoScreen.classList.remove('active');
       videoScreen.style.display = 'none';
 
-      mobileEndScreen.style.display = 'flex';
+      resetPinUI();
+      mobileEndScreen.style.display = 'block';
+      digit1.focus();
     }
   });
 
-  mobileEndBtn.onclick = async () => {
-    const randomVideo = getRandomGiftVideo();
-
-    mobileEndScreen.style.display = 'none';
-
-    giftOverlay.classList.add('show');
-    giftOverlay.classList.add('withBg');
-
+  giftCloseBtn.onclick = () => {
     giftVideo.pause();
-    giftVideo.src = randomVideo + "?t=" + Date.now();
-    giftVideo.load();
-
-    try {
-      await giftVideo.play();
-    } catch (e) {
-      console.log("Gift video play hiba:", e);
-    }
+    giftVideo.currentTime = 0;
+    giftOverlay.classList.remove('show', 'withBg');
+    showScreen(startScreen);
   };
 
- giftCloseBtn.onclick = () => {
-  giftVideo.pause();
-  giftVideo.currentTime = 0;
-  giftOverlay.classList.remove('show');
-  giftOverlay.classList.remove('withBg');
-  showScreen(startScreen);
-};
-
-giftVideo.addEventListener('ended', () => {
-  giftVideo.currentTime = 0;
-  giftOverlay.classList.remove('show');
-  giftOverlay.classList.remove('withBg');
-  showScreen(startScreen);
-});
+  giftVideo.addEventListener('ended', () => {
+    giftVideo.currentTime = 0;
+    giftOverlay.classList.remove('show', 'withBg');
+    showScreen(startScreen);
+  });
 </script>
 
 </body>
