@@ -108,6 +108,7 @@
       background: rgba(0,0,0,0.45);
       border-radius: 18px;
       backdrop-filter: blur(3px);
+      z-index: 20;
     }
 
     .pinTitle {
@@ -141,8 +142,16 @@
       border-color: #ffd27a;
       box-shadow: 0 0 0 3px rgba(255,210,122,0.25);
     }
-
-    .pinActions {
+    .pinDigit,
+#continueBtn,
+#pinMessage,
+.pinTitle,
+.pinInputs,
+.pinActions {
+  position: relative;
+  z-index: 21;
+}
+ .pinActions {
       display: flex;
       justify-content: center;
       align-items: center;
