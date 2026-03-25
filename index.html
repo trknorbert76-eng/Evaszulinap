@@ -88,13 +88,14 @@
       height: 100vh;
     }
 
-    #mobileEndImage {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-      background: #000;
-    }
+ #mobileEndImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: #000;
+  pointer-events: none;
+}
 
     .pinPanel {
       position: absolute;
@@ -345,7 +346,34 @@
       pinPanel.style.display = "block";
       naughtyStep = 0;
     }
+function exitFullscreenMobile() {
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (!isMobile) return;
 
+  try {
+    if (document.fullscreenElement && document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  } catch (e) {
+    console.log("document fullscreen exit hiba:", e);
+  }
+
+  try {
+    if (document.webkitFullscreenElement && document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  } catch (e) {
+    console.log("webkit fullscreen exit hiba:", e);
+  }
+
+  try {
+    if (mainVideo.webkitDisplayingFullscreen && mainVideo.webkitExitFullscreen) {
+      mainVideo.webkitExitFullscreen();
+    }
+  } catch (e) {
+    console.log("video fullscreen exit hiba:", e);
+  }
+}
     async function startSelectedVideo(videoUrl) {
       pinPanel.style.display = "none";
       mobileEndScreen.style.display = "none";
@@ -467,17 +495,24 @@
       }
     };
 
-    mainVideo.addEventListener('timeupdate', () => {
-      if (!endShown && mainVideo.currentTime >= END_TIME) {
-        endShown = true;
-        mainVideo.pause();
-        videoScreen.classList.remove('active');
-        videoScreen.style.display = 'none';
-        resetPinUI();
-        mobileEndScreen.style.display = 'block';
-        digit1.focus();
-      }
-    });
+  mainVideo.addEventListener('timeupdate', () => {
+  if (!endShown && mainVideo.currentTime >= END_TIME) {
+    endShown = true;
+    mainVideo.pause();
+
+    exitFullscreenMobile();
+
+    videoScreen.classList.remove('active');
+    videoScreen.style.display = 'none';
+
+    resetPinUI();
+    mobileEndScreen.style.display = 'block';
+
+    setTimeout(() => {
+      digit1.focus();
+    }, 300);
+  }
+});
 
     giftCloseBtn.onclick = () => {
       giftVideo.pause();
@@ -491,6 +526,11 @@
       giftOverlay.classList.remove('show', 'withBg');
       showScreen(startScreen);
     });
+   pinPanel.addEventListener('click', () => {
+  setTimeout(() => {
+    digit1.focus();
+  }, 50);
+}); 
   </script>
 </body>
 </html>
