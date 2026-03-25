@@ -169,7 +169,16 @@
       color: #111;
       font-weight: bold;
     }
-
+#clearBtn {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 20px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.75);
+  color: #111;
+  font-weight: bold;
+}
     #pinMessage {
       min-height: 28px;
       margin-top: 14px;
@@ -286,9 +295,10 @@
           <input id="digit4" class="pinDigit" type="text" inputmode="numeric" maxlength="1" autocomplete="off">
         </div>
 
-        <div class="pinActions">
-          <button id="continueBtn" type="button">Tovább</button>
-        </div>
+       <div class="pinActions">
+  <button id="clearBtn" type="button">Törlés</button>
+  <button id="continueBtn" type="button">Tovább</button>
+</div>
 
         <div id="pinMessage"></div>
       </div>
@@ -310,6 +320,7 @@
     const mobileEndScreen = document.getElementById('mobileEndScreen');
     const pinPanel = document.getElementById('pinPanel');
     const continueBtn = document.getElementById('continueBtn');
+    const clearBtn = document.getElementById('clearBtn');
     const pinMessage = document.getElementById('pinMessage');
     const digit1 = document.getElementById('digit1');
     const digit2 = document.getElementById('digit2');
@@ -476,6 +487,12 @@ async function exitAnyFullscreen() {
     continueBtn.onclick = () => {
       handlePinSubmit();
     };
+    clearBtn.onclick = () => {
+  pinInputs.forEach(input => input.value = "");
+  pinMessage.textContent = "";
+  naughtyStep = 0;
+  digit1.focus();
+};
 
     playBtn.onclick = async () => {
       endShown = false;
