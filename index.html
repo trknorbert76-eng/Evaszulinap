@@ -355,13 +355,10 @@
       pinPanel.style.display = "block";
       naughtyStep = 0;
     }
-function exitFullscreenMobile() {
-  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if (!isMobile) return;
-
+async function exitAnyFullscreen() {
   try {
     if (document.fullscreenElement && document.exitFullscreen) {
-      document.exitFullscreen();
+      await document.exitFullscreen();
     }
   } catch (e) {
     console.log("document fullscreen exit hiba:", e);
@@ -504,12 +501,12 @@ function exitFullscreenMobile() {
       }
     };
 
-  mainVideo.addEventListener('timeupdate', () => {
+mainVideo.addEventListener('timeupdate', async () => {
   if (!endShown && mainVideo.currentTime >= END_TIME) {
     endShown = true;
     mainVideo.pause();
 
-    exitFullscreenMobile();
+    await exitAnyFullscreen();
 
     videoScreen.classList.remove('active');
     videoScreen.style.display = 'none';
