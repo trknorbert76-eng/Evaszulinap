@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Szülinapi videó</title>
-<meta property="og:image" content="https://trknorbert76-eng.github.io/Evaszulinap/intro.png">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://trknorbert76-eng.github.io/Evaszulinap/">
+  <meta property="og:image" content="https://trknorbert76-eng.github.io/Evaszulinap/intro.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://trknorbert76-eng.github.io/Evaszulinap/">
+  <meta name="twitter:card" content="summary_large_image">
 
-<meta name="twitter:card" content="summary_large_image">
   <style>
     * { box-sizing: border-box; }
 
@@ -88,14 +88,14 @@
       height: 100vh;
     }
 
- #mobileEndImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  background: #000;
-  pointer-events: none;
-}
+    #mobileEndImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: #000;
+      pointer-events: none;
+    }
 
     .pinPanel {
       position: absolute;
@@ -142,16 +142,18 @@
       border-color: #ffd27a;
       box-shadow: 0 0 0 3px rgba(255,210,122,0.25);
     }
+
     .pinDigit,
-#continueBtn,
-#pinMessage,
-.pinTitle,
-.pinInputs,
-.pinActions {
-  position: relative;
-  z-index: 21;
-}
- .pinActions {
+    #continueBtn,
+    #pinMessage,
+    .pinTitle,
+    .pinInputs,
+    .pinActions {
+      position: relative;
+      z-index: 21;
+    }
+
+    .pinActions {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -169,16 +171,18 @@
       color: #111;
       font-weight: bold;
     }
-#clearBtn {
-  border: none;
-  border-radius: 12px;
-  padding: 12px 24px;
-  font-size: 20px;
-  cursor: pointer;
-  background: rgba(255,255,255,0.75);
-  color: #111;
-  font-weight: bold;
-}
+
+    #clearBtn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-size: 20px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.75);
+      color: #111;
+      font-weight: bold;
+    }
+
     #pinMessage {
       min-height: 28px;
       margin-top: 14px;
@@ -295,10 +299,10 @@
           <input id="digit4" class="pinDigit" type="text" inputmode="numeric" maxlength="1" autocomplete="off">
         </div>
 
-       <div class="pinActions">
-  <button id="clearBtn" type="button">Törlés</button>
-  <button id="continueBtn" type="button">Tovább</button>
-</div>
+        <div class="pinActions">
+          <button id="clearBtn" type="button">Törlés</button>
+          <button id="continueBtn" type="button">Tovább</button>
+        </div>
 
         <div id="pinMessage"></div>
       </div>
@@ -334,6 +338,10 @@
     const VIDEO_URL = "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774195689/utols%C3%B3ok_utols%C3%B3oja_qawodm.mp4";
     const WORKER_URL = "https://shy-hall-764d.trknorbert76.workers.dev";
 
+    const SUPABASE_URL = "https://hhysuxfwdjwlxtmlxnrv.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_4Btoi0wsypr48xQH31RMaQ_r1YrPpsv";
+    const SUPABASE_TABLE = "birthday_stats";
+
     const giftVideos = [
       'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134175/T%C3%B6r%C3%B6k_Norbert_3_vers_a_szerelemr%C5%91l_gm8zu6.mp4',
       'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134156/25_%C3%A9vesen---T%C3%B6r%C3%B6k_Norbert_verse_am6wtk.mp4',
@@ -349,15 +357,36 @@
     const END_TIME = 255;
     let endShown = false;
     let naughtyStep = 0;
+    let giftEndedNaturally = false;
+
+    async function trackEvent(eventName) {
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": SUPABASE_KEY,
+            "Authorization": "Bearer " + SUPABASE_KEY,
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify({ event: eventName })
+        });
+      } catch (err) {
+        console.log("Supabase track hiba:", err);
+      }
+    }
 
     function showScreen(screen) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       screen.classList.add('active');
     }
 
-    function getRandomGiftVideo() {
+    function getRandomGiftVideoData() {
       const index = Math.floor(Math.random() * giftVideos.length);
-      return giftVideos[index];
+      return {
+        url: giftVideos[index],
+        index: index
+      };
     }
 
     function resetPinUI() {
@@ -366,40 +395,58 @@
       pinPanel.style.display = "block";
       naughtyStep = 0;
     }
-async function exitAnyFullscreen() {
-  try {
-    if (document.fullscreenElement && document.exitFullscreen) {
-      await document.exitFullscreen();
-    }
-  } catch (e) {
-    console.log("document fullscreen exit hiba:", e);
-  }
 
-  try {
-    if (document.webkitFullscreenElement && document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    }
-  } catch (e) {
-    console.log("webkit fullscreen exit hiba:", e);
-  }
+    async function exitAnyFullscreen() {
+      try {
+        if (document.fullscreenElement && document.exitFullscreen) {
+          await document.exitFullscreen();
+        }
+      } catch (e) {
+        console.log("document fullscreen exit hiba:", e);
+      }
 
-  try {
-    if (mainVideo.webkitDisplayingFullscreen && mainVideo.webkitExitFullscreen) {
-      mainVideo.webkitExitFullscreen();
+      try {
+        if (document.webkitFullscreenElement && document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      } catch (e) {
+        console.log("webkit fullscreen exit hiba:", e);
+      }
+
+      try {
+        if (mainVideo.webkitDisplayingFullscreen && mainVideo.webkitExitFullscreen) {
+          mainVideo.webkitExitFullscreen();
+        }
+      } catch (e) {
+        console.log("video fullscreen exit hiba:", e);
+      }
     }
-  } catch (e) {
-    console.log("video fullscreen exit hiba:", e);
-  }
-}
-    async function startSelectedVideo(videoUrl) {
+
+    async function startSelectedVideo(videoUrl, mode, index = null) {
       pinPanel.style.display = "none";
       mobileEndScreen.style.display = "none";
       giftOverlay.classList.add('show');
       giftOverlay.classList.add('withBg');
 
+      giftEndedNaturally = false;
+
       giftVideo.pause();
       giftVideo.src = videoUrl + "?t=" + Date.now();
       giftVideo.load();
+
+      await trackEvent("gift_video_started_total");
+
+      if (mode === "random") {
+        await trackEvent("gift_video_started_random");
+        if (index !== null) {
+          await trackEvent(`gift_video_item_${index + 1}`);
+        }
+      }
+
+      if (mode === "pin") {
+        await trackEvent("gift_video_started_pin");
+        await trackEvent("gift_video_item_pin");
+      }
 
       try {
         await giftVideo.play();
@@ -412,10 +459,14 @@ async function exitAnyFullscreen() {
       const code = pinInputs.map(input => input.value).join('').trim();
 
       if (!code) {
-        pinMessage.textContent = "";
-        startSelectedVideo(getRandomGiftVideo());
+        await trackEvent("pin_empty_continue");
+
+        const selected = getRandomGiftVideoData();
+        startSelectedVideo(selected.url, "random", selected.index);
         return;
       }
+
+      await trackEvent("pin_attempt_total");
 
       try {
         const res = await fetch(WORKER_URL, {
@@ -427,13 +478,18 @@ async function exitAnyFullscreen() {
         const data = await res.json();
 
         if (data.ok && data.video) {
+          await trackEvent("pin_correct");
+
           pinMessage.textContent = "Szia Éva, boldog szülinapot!";
           naughtyStep = 0;
+
           setTimeout(() => {
             pinMessage.textContent = "";
-            startSelectedVideo(data.video);
+            startSelectedVideo(data.video, "pin");
           }, 1200);
         } else {
+          await trackEvent("pin_wrong");
+
           naughtyStep++;
           if (naughtyStep === 1) {
             pinMessage.textContent = "Te kis huncut!";
@@ -447,6 +503,8 @@ async function exitAnyFullscreen() {
         }
       } catch (err) {
         console.log("Worker hiba:", err);
+        await trackEvent("pin_wrong");
+
         naughtyStep++;
         if (naughtyStep === 1) {
           pinMessage.textContent = "Te kis huncut!";
@@ -487,12 +545,13 @@ async function exitAnyFullscreen() {
     continueBtn.onclick = () => {
       handlePinSubmit();
     };
-    clearBtn.onclick = () => {
-  pinInputs.forEach(input => input.value = "");
-  pinMessage.textContent = "";
-  naughtyStep = 0;
-  digit1.focus();
-};
+
+    clearBtn.onclick = async () => {
+      pinInputs.forEach(input => input.value = "");
+      pinMessage.textContent = "";
+      naughtyStep = 0;
+      digit1.focus();
+    };
 
     playBtn.onclick = async () => {
       endShown = false;
@@ -511,6 +570,8 @@ async function exitAnyFullscreen() {
       mainVideo.src = VIDEO_URL + "?t=" + Date.now();
       mainVideo.load();
 
+      await trackEvent("main_video_start");
+
       try {
         await mainVideo.play();
       } catch (e) {
@@ -518,42 +579,46 @@ async function exitAnyFullscreen() {
       }
     };
 
-mainVideo.addEventListener('timeupdate', async () => {
-  if (!endShown && mainVideo.currentTime >= END_TIME) {
-    endShown = true;
-    mainVideo.pause();
+    mainVideo.addEventListener('timeupdate', async () => {
+      if (!endShown && mainVideo.currentTime >= END_TIME) {
+        endShown = true;
+        mainVideo.pause();
 
-    await exitAnyFullscreen();
+        await trackEvent("main_video_end");
 
-    videoScreen.classList.remove('active');
-    videoScreen.style.display = 'none';
+        await exitAnyFullscreen();
 
-    resetPinUI();
-    mobileEndScreen.style.display = 'block';
+        videoScreen.classList.remove('active');
+        videoScreen.style.display = 'none';
 
-    setTimeout(() => {
-      digit1.focus();
-    }, 300);
-  }
-});
+        resetPinUI();
+        mobileEndScreen.style.display = 'block';
 
-    giftCloseBtn.onclick = () => {
+        setTimeout(() => {
+          digit1.focus();
+        }, 300);
+      }
+    });
+
+    giftCloseBtn.onclick = async () => {
       giftVideo.pause();
       giftVideo.currentTime = 0;
       giftOverlay.classList.remove('show', 'withBg');
       showScreen(startScreen);
     };
 
-    giftVideo.addEventListener('ended', () => {
+    giftVideo.addEventListener('ended', async () => {
+      giftEndedNaturally = true;
       giftVideo.currentTime = 0;
       giftOverlay.classList.remove('show', 'withBg');
       showScreen(startScreen);
     });
-   pinPanel.addEventListener('click', () => {
-  setTimeout(() => {
-    digit1.focus();
-  }, 50);
-}); 
+
+    pinPanel.addEventListener('click', () => {
+      setTimeout(() => {
+        digit1.focus();
+      }, 50);
+    });
   </script>
 </body>
 </html>
