@@ -185,6 +185,7 @@ async function loadStats(){
     const label = videoNames[num] || `Videó ${num}`;
     addRow(giftItemsTable, label, counts[key]);
   });
+  addRow(giftItemsTable, "Márciusi hasonlat", counts["video_marciusi_hasonlat"]);
 
   if (giftItemEntries.length === 0) {
     addRow(giftItemsTable, "Még nincs adat", 0);
