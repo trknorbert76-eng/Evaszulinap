@@ -961,6 +961,25 @@
     pinPanel.scrollIntoView({ behavior: "smooth", block: "start" });
   }, 50);
 });
+    window.addEventListener("resize", () => {
+  setTimeout(() => {
+    if (document.activeElement && document.activeElement.classList.contains("pinDigit")) {
+      document.querySelector(".pinPanel")?.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
+  }, 200);
+});
+
+window.addEventListener("orientationchange", () => {
+  setTimeout(() => {
+    document.querySelector(".pinPanel")?.scrollIntoView({
+      behavior: "auto",
+      block: "center"
+    });
+  }, 300);
+});
   </script>
 </body>
 </html>
