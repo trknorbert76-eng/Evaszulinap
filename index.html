@@ -325,76 +325,27 @@
       animation: shake 0.4s ease;
     }
 
- @media (max-width: 900px) {
-  .pinPanel {
-    top: 66%;
-    width: min(94vw, 620px);
-    padding: 14px 14px 16px;
-  }
-
-  .pinDigit {
-    width: 50px;
-    height: 58px;
-    font-size: 28px;
-  }
-
-  .giftLayout {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    padding-top: 0;
-  }
-
-  .playlistToggle {
-    width: 100%;
-    font-size: 17px;
-    padding: 12px 14px;
-  }
-
-  .giftPlaylist {
-    padding: 12px;
-    overflow-y: auto;
-  }
-
-  .giftPlaylistTitle {
-    font-size: 18px;
-  }
-
-  .giftItem {
-    font-size: 15px;
-    padding: 10px 12px;
-  }
-
-  #giftCloseBtn {
-    top: 10px;
-    right: 10px;
-    width: 42px;
-    height: 42px;
-    font-size: 24px;
-  }
-}
-
 /* MOBIL ÁLLÓ */
 @media (max-width: 900px) and (orientation: portrait) {
   .giftBox {
     position: absolute;
     left: 50%;
-    top: 28%;
+    top: 26%;
     transform: translate(-50%, -50%);
-    width: 92vw;
+    width: 82vw;
     aspect-ratio: 16 / 9;
   }
 
   .giftPlaylistWrap {
     position: absolute;
     left: 50%;
-    top: 56%;
+    top: 50%;
     transform: translate(-50%, -50%);
-    width: 92vw;
+    width: 88vw;
   }
 
   .giftPlaylist {
-    max-height: 28vh;
+    max-height: 26vh;
   }
 }
 
@@ -402,23 +353,23 @@
 @media (max-width: 900px) and (orientation: landscape) {
   .giftBox {
     position: absolute;
-    left: 36%;
-    top: 40%;
+    left: 34%;
+    top: 38%;
     transform: translate(-50%, -50%);
-    width: 56vw;
+    width: 48vw;
     aspect-ratio: 16 / 9;
   }
 
   .giftPlaylistWrap {
     position: absolute;
-    left: 78%;
-    top: 40%;
+    left: 77%;
+    top: 38%;
     transform: translate(-50%, -50%);
-    width: 26vw;
+    width: 24vw;
   }
 
   .giftPlaylist {
-    max-height: 48vh;
+    max-height: 46vh;
   }
 
   .playlistToggle {
