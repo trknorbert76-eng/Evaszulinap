@@ -325,62 +325,72 @@
       animation: shake 0.4s ease;
     }
 
-    @media (max-width: 900px) {
-      .pinPanel {
-        top: 66%;
-        width: min(94vw, 620px);
-        padding: 14px 14px 16px;
-      }
+  @media (max-width: 900px) {
+  .pinPanel {
+    top: 66%;
+    width: min(94vw, 620px);
+    padding: 14px 14px 16px;
+  }
 
-      .pinDigit {
-        width: 50px;
-        height: 58px;
-        font-size: 28px;
-      }
+  .pinDigit {
+    width: 50px;
+    height: 58px;
+    font-size: 28px;
+  }
 
-      .giftLayout {
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        gap: 12px;
-        padding-top: 50px;
-      }
+  .giftLayout {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    padding-top: 0;
+  }
 
-      .giftBox {
-        width: min(94vw, 760px);
-      }
+  .giftBox {
+    position: absolute;
+    left: 50%;
+    top: 32%;
+    transform: translate(-50%, -50%);
+    width: 92vw;
+    aspect-ratio: 16 / 9;
+  }
 
-      .giftPlaylistWrap {
-        width: min(94vw, 760px);
-      }
+  .giftPlaylistWrap {
+    position: absolute;
+    left: 50%;
+    top: 62%;
+    transform: translate(-50%, -50%);
+    width: 92vw;
+  }
 
-      .playlistToggle {
-        font-size: 17px;
-        padding: 12px 14px;
-      }
+  .playlistToggle {
+    width: 100%;
+    font-size: 17px;
+    padding: 12px 14px;
+  }
 
-      .giftPlaylist {
-        max-height: 32vh;
-        padding: 12px;
-      }
+  .giftPlaylist {
+    max-height: 26vh;
+    padding: 12px;
+    overflow-y: auto;
+  }
 
-      .giftPlaylistTitle {
-        font-size: 18px;
-      }
+  .giftPlaylistTitle {
+    font-size: 18px;
+  }
 
-      .giftItem {
-        font-size: 15px;
-        padding: 10px 12px;
-      }
+  .giftItem {
+    font-size: 15px;
+    padding: 10px 12px;
+  }
 
-      #giftCloseBtn {
-        top: 10px;
-        right: 10px;
-        width: 42px;
-        height: 42px;
-        font-size: 24px;
-      }
-    }
+  #giftCloseBtn {
+    top: 10px;
+    right: 10px;
+    width: 42px;
+    height: 42px;
+    font-size: 24px;
+  }
+}
   </style>
 </head>
 <body>
@@ -438,7 +448,7 @@
         </button>
 
         <div id="giftPlaylist" class="giftPlaylist">
-          <div class="giftPlaylistTitle">Választható videók</div>
+          <div class="giftPlaylistTitle">Èva kedvenc videói:</div>
           <div id="giftList" class="giftList"></div>
         </div>
       </aside>
