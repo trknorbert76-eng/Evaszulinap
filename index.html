@@ -198,6 +198,7 @@
       align-items: center;
       justify-content: center;
       z-index: 1000000;
+      padding: 18px;
     }
 
     .giftOverlay.show { display: flex; }
@@ -206,16 +207,89 @@
       background: url('hatter.png') center/cover no-repeat;
     }
 
+    .giftLayout {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 18px;
+      width: min(95vw, 1400px);
+    }
+
     .giftBox {
-      position: absolute;
-      left: 10%;
-      top: 22%;
-      width: min(45vw, 460px);
+      width: min(68vw, 920px);
       aspect-ratio: 16 / 9;
-      border-radius: 4px;
+      border-radius: 8px;
       overflow: hidden;
       background: #000;
       box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+      flex-shrink: 0;
+    }
+
+    .giftPlaylistWrap {
+      width: min(26vw, 340px);
+      flex-shrink: 0;
+    }
+
+    .playlistToggle {
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      background: rgba(255,255,255,0.92);
+      color: #111;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    }
+
+    .giftPlaylist {
+      display: none;
+      margin-top: 10px;
+      max-height: 62vh;
+      overflow-y: auto;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    .giftPlaylist.show {
+      display: block;
+    }
+
+    .giftPlaylistTitle {
+      color: #fff6d8;
+      font-size: 21px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .giftList {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .giftItem {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1.35;
+      background: rgba(255,255,255,0.92);
+      color: #111;
+      font-weight: bold;
+    }
+
+    .giftItem.active {
+      background: #ffe7a8;
+      box-shadow: 0 0 0 2px rgba(255,214,122,0.6) inset;
     }
 
     #giftCloseBtn {
@@ -259,11 +333,47 @@
         font-size: 28px;
       }
 
+      .giftLayout {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 12px;
+        padding-top: 50px;
+      }
+
       .giftBox {
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        width: min(90vw, 760px);
+        width: min(94vw, 760px);
+      }
+
+      .giftPlaylistWrap {
+        width: min(94vw, 760px);
+      }
+
+      .playlistToggle {
+        font-size: 17px;
+        padding: 12px 14px;
+      }
+
+      .giftPlaylist {
+        max-height: 32vh;
+        padding: 12px;
+      }
+
+      .giftPlaylistTitle {
+        font-size: 18px;
+      }
+
+      .giftItem {
+        font-size: 15px;
+        padding: 10px 12px;
+      }
+
+      #giftCloseBtn {
+        top: 10px;
+        right: 10px;
+        width: 42px;
+        height: 42px;
+        font-size: 24px;
       }
     }
   </style>
@@ -311,8 +421,22 @@
 
   <div id="giftOverlay" class="giftOverlay">
     <button id="giftCloseBtn" type="button">×</button>
-    <div class="giftBox">
-      <video id="giftVideo" playsinline webkit-playsinline controls></video>
+
+    <div class="giftLayout">
+      <div class="giftBox">
+        <video id="giftVideo" playsinline webkit-playsinline controls></video>
+      </div>
+
+      <aside class="giftPlaylistWrap">
+        <button id="playlistToggle" type="button" class="playlistToggle">
+          Videók listája ▼
+        </button>
+
+        <div id="giftPlaylist" class="giftPlaylist">
+          <div class="giftPlaylistTitle">Választható videók</div>
+          <div id="giftList" class="giftList"></div>
+        </div>
+      </aside>
     </div>
   </div>
 
@@ -334,6 +458,9 @@
     const giftOverlay = document.getElementById('giftOverlay');
     const giftVideo = document.getElementById('giftVideo');
     const giftCloseBtn = document.getElementById('giftCloseBtn');
+    const giftList = document.getElementById('giftList');
+    const playlistToggle = document.getElementById('playlistToggle');
+    const giftPlaylist = document.getElementById('giftPlaylist');
 
     const VIDEO_URL = "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774195689/utols%C3%B3ok_utols%C3%B3oja_qawodm.mp4";
     const WORKER_URL = "https://shy-hall-764d.trknorbert76.workers.dev";
@@ -343,17 +470,46 @@
     const SUPABASE_TABLE = "birthday_stats";
 
     const giftVideos = [
-      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134175/T%C3%B6r%C3%B6k_Norbert_3_vers_a_szerelemr%C5%91l_gm8zu6.mp4',
-      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134156/25_%C3%A9vesen---T%C3%B6r%C3%B6k_Norbert_verse_am6wtk.mp4',
-      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134159/P%C3%A1rizs_Room_tour_2025_rnchhh.mp4',
-      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134153/Legszebb----T%C3%B6r%C3%B6k_Norbert_verse_bq7ori.mp4',
-      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134139/%C3%88v%C3%A1mnak_a_boldogs%C3%A1gr%C3%B3l_T%C3%B6r%C3%B6k_Norbert_verse_kwx2lb.mp4',
-       'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774650954/M%C3%A1rciusi_hasonlat_qnojb1.mp4',
-      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134129/25_H%C3%A1zass%C3%A1gi_%C3%A9vfordul%C3%B3nkra_howpjg.mp4',
-      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134104/T%C3%B6r%C3%B6k_Norbert_Mindhal%C3%A1lig_wtvuc8.mp4',
-     'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134106/%C3%88vfordul%C3%B3_29._aqqeaq.mp4',
-      'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134099/T%C3%B6r%C3%B6k_Norbert_Ahogy_vagy.._n3ukws.mp4',
-       'https://res.cloudinary.com/dgcumjeuj/video/upload/v1774650954/M%C3%A1rciusi_hasonlat_qnojb1.mp4',
+      {
+        title: "💛 Három vers a szerelemről",
+        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134175/T%C3%B6r%C3%B6k_Norbert_3_vers_a_szerelemr%C5%91l_gm8zu6.mp4"
+      },
+      {
+        title: "🌿 25 évesen",
+        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134156/25_%C3%A9vesen---T%C3%B6r%C3%B6k_Norbert_verse_am6wtk.mp4"
+      },
+      {
+        title: "🗼 Párizs – Room tour",
+        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134159/P%C3%A1rizs_Room_tour_2025_rnchhh.mp4"
+      },
+      {
+        title: "✨ Legszebb",
+        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134153/Legszebb----T%C3%B6r%C3%B6k_Norbert_verse_bq7ori.mp4"
+      },
+      {
+        title: "💌 Évámnak a boldogságról",
+        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134139/%C3%88v%C3%A1mnak_a_boldogs%C3%A1gr%C3%B3l_T%C3%B6r%C3%B6k_Norbert_verse_kwx2lb.mp4"
+      },
+      {
+        title: "🎂 Márciusi hasonlat",
+        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774650954/M%C3%A1rciusi_hasonlat_qnojb1.mp4"
+      },
+      {
+        title: "💍 25. házassági évfordulónkra",
+        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134129/25_H%C3%A1zass%C3%A1gi_%C3%A9vfordul%C3%B3nkra_howpjg.mp4"
+      },
+      {
+        title: "🔥 Mindhalálig",
+        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134104/T%C3%B6r%C3%B6k_Norbert_Mindhal%C3%A1lig_wtvuc8.mp4"
+      },
+      {
+        title: "🕊️ 29. házassági évfordulónkra",
+        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134106/%C3%88vfordul%C3%B3_29._aqqeaq.mp4"
+      },
+      {
+        title: "🌙 Ahogy vagy…",
+        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134099/T%C3%B6r%C3%B6k_Norbert_Ahogy_vagy.._n3ukws.mp4"
+      }
     ];
 
     const END_TIME = 255;
@@ -386,9 +542,26 @@
     function getRandomGiftVideoData() {
       const index = Math.floor(Math.random() * giftVideos.length);
       return {
-        url: giftVideos[index],
+        item: giftVideos[index],
         index: index
       };
+    }
+
+    function renderGiftList(activeIndex = null) {
+      giftList.innerHTML = "";
+
+      giftVideos.forEach((video, index) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "giftItem" + (index === activeIndex ? " active" : "");
+        btn.textContent = video.title;
+
+        btn.onclick = async () => {
+          await startSelectedVideo(video.url, "manual", index);
+        };
+
+        giftList.appendChild(btn);
+      });
     }
 
     function resetPinUI() {
@@ -430,6 +603,16 @@
       giftOverlay.classList.add('show');
       giftOverlay.classList.add('withBg');
 
+      renderGiftList(index);
+
+      if (mode === "random") {
+        giftPlaylist.classList.remove("show");
+        playlistToggle.textContent = "Videók listája ▼";
+      } else {
+        giftPlaylist.classList.add("show");
+        playlistToggle.textContent = "Videók listája ▲";
+      }
+
       giftEndedNaturally = false;
 
       giftVideo.pause();
@@ -437,9 +620,10 @@
       giftVideo.load();
 
       await trackEvent("gift_video_started_total");
+
       if (videoUrl.includes("M%C3%A1rciusi_hasonlat") || videoUrl.includes("Marciusi_hasonlat")) {
-  await trackEvent("video_marciusi_hasonlat");
-}
+        await trackEvent("video_marciusi_hasonlat");
+      }
 
       if (mode === "random") {
         await trackEvent("gift_video_started_random");
@@ -451,6 +635,13 @@
       if (mode === "pin") {
         await trackEvent("gift_video_started_pin");
         await trackEvent("gift_video_item_pin");
+      }
+
+      if (mode === "manual") {
+        await trackEvent("gift_video_started_manual");
+        if (index !== null) {
+          await trackEvent(`gift_video_manual_item_${index + 1}`);
+        }
       }
 
       try {
@@ -465,9 +656,8 @@
 
       if (!code) {
         await trackEvent("pin_empty_continue");
-
         const selected = getRandomGiftVideoData();
-        startSelectedVideo(selected.url, "random", selected.index);
+        startSelectedVideo(selected.item.url, "random", selected.index);
         return;
       }
 
@@ -547,6 +737,13 @@
       });
     });
 
+    playlistToggle.onclick = () => {
+      giftPlaylist.classList.toggle("show");
+      playlistToggle.textContent = giftPlaylist.classList.contains("show")
+        ? "Videók listája ▲"
+        : "Videók listája ▼";
+    };
+
     continueBtn.onclick = () => {
       handlePinSubmit();
     };
@@ -562,6 +759,8 @@
       endShown = false;
       mobileEndScreen.style.display = 'none';
       giftOverlay.classList.remove('show', 'withBg');
+      giftPlaylist.classList.remove("show");
+      playlistToggle.textContent = "Videók listája ▼";
 
       giftVideo.pause();
       giftVideo.removeAttribute('src');
@@ -608,14 +807,22 @@
     giftCloseBtn.onclick = async () => {
       giftVideo.pause();
       giftVideo.currentTime = 0;
+      giftVideo.removeAttribute('src');
+      giftVideo.load();
       giftOverlay.classList.remove('show', 'withBg');
+      giftPlaylist.classList.remove("show");
+      playlistToggle.textContent = "Videók listája ▼";
       showScreen(startScreen);
     };
 
     giftVideo.addEventListener('ended', async () => {
       giftEndedNaturally = true;
       giftVideo.currentTime = 0;
+      giftVideo.removeAttribute('src');
+      giftVideo.load();
       giftOverlay.classList.remove('show', 'withBg');
+      giftPlaylist.classList.remove("show");
+      playlistToggle.textContent = "Videók listája ▼";
       showScreen(startScreen);
     });
 
