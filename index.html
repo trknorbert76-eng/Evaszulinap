@@ -208,27 +208,32 @@
     }
 
     .giftLayout {
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      gap: 18px;
-      width: min(95vw, 1400px);
-    }
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
 
-    .giftBox {
-      width: min(68vw, 920px);
-      aspect-ratio: 16 / 9;
-      border-radius: 8px;
-      overflow: hidden;
-      background: #000;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-      flex-shrink: 0;
-    }
+.giftBox {
+  position: absolute;
+  left: 42%;
+  top: 43%;
+  transform: translate(-50%, -50%);
+  width: min(40vw, 720px);
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+}
 
-    .giftPlaylistWrap {
-      width: min(26vw, 340px);
-      flex-shrink: 0;
-    }
+.giftPlaylistWrap {
+  position: absolute;
+  left: 42%;
+  top: 64%;
+  transform: translateX(-50%);
+  width: min(40vw, 720px);
+}
+
 
     .playlistToggle {
       width: 100%;
