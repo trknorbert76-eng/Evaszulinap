@@ -41,13 +41,17 @@ tr:nth-child(even){
 .note{
   color:#bbb;
   margin-bottom:24px;
+  line-height:1.5;
 }
 </style>
 </head>
 <body>
 
 <h1>Szülinapi statisztika</h1>
-<div class="note">Csak a szülinapos oldal mérései.</div>
+<div class="note">
+  Csak a szülinapos oldal mérései.<br>
+  A normál lista 10 videós, a két titkos videó külön van mérve.
+</div>
 
 <h2>1. Fő videó</h2>
 <table>
@@ -100,15 +104,15 @@ const TABLE_NAME = "birthday_stats";
 
 const videoNames = {
   1: "3 vers a szerelemről",
-  2: "25 Évesen",
-  3: "Room Tour Párizs",
+  2: "25 évesen",
+  3: "Párizs – Room tour",
   4: "Legszebb",
   5: "Évámnak a boldogságról",
-  6: "25. Házassági évfordulónkra",
-  7: "Mindhalálig",
-  8: "29. Házassági évfordulónkra",
-  9: "Ahogy vagy",
-  10: "Márciusi hasonlat"
+  6: "Márciusi hasonlat",
+  7: "25. házassági évfordulónkra",
+  8: "Mindhalálig",
+  9: "29. házassági évfordulónkra",
+  10: "Ahogy vagy"
 };
 
 function countEvents(rows){
@@ -163,33 +167,14 @@ async function loadStats(){
   addRow(giftSummaryTable, "Összes ajándék videó indítás", counts["gift_video_started_total"]);
   addRow(giftSummaryTable, "Ebből random", counts["gift_video_started_random"]);
   addRow(giftSummaryTable, "Ebből PIN-es külön videó", counts["gift_video_started_pin"]);
+  addRow(giftSummaryTable, "Ebből listából indított", counts["gift_video_started_manual"]);
 
-  const giftItemEntries = Object.keys(counts)
-    .filter(key => key.startsWith("gift_video_item_"))
-    .sort((a, b) => {
-      if (a === "gift_video_item_pin") return 1;
-      if (b === "gift_video_item_pin") return -1;
-
-      const aNum = parseInt(a.replace("gift_video_item_", ""), 10);
-      const bNum = parseInt(b.replace("gift_video_item_", ""), 10);
-      return aNum - bNum;
-    });
-
-  giftItemEntries.forEach(key => {
-    if (key === "gift_video_item_pin") {
-      addRow(giftItemsTable, "Róka2 videó", counts[key]);
-      return;
-    }
-
-    const num = parseInt(key.replace("gift_video_item_", ""), 10);
-    const label = videoNames[num] || `Videó ${num}`;
-    addRow(giftItemsTable, label, counts[key]);
-  });
-  addRow(giftItemsTable, "Márciusi hasonlat", counts["video_marciusi_hasonlat"]);
-
-  if (giftItemEntries.length === 0) {
-    addRow(giftItemsTable, "Még nincs adat", 0);
+  for (let i = 1; i <= 10; i++) {
+    addRow(giftItemsTable, videoNames[i], counts[`gift_video_item_${i}`]);
   }
+
+  addRow(giftItemsTable, "🎁 Róka 2 – Ajándék videó", counts["gift_video_item_pin_1"]);
+  addRow(giftItemsTable, "🎬 Tyúk1 – Reakció", counts["gift_video_item_pin_2"]);
 }
 
 loadStats();
