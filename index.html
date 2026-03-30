@@ -802,10 +802,7 @@
       giftVideo.load();
 
       await trackEvent("gift_video_started_total");
-
-      if (videoUrl.includes("M%C3%A1rciusi_hasonlat") || videoUrl.includes("Marciusi_hasonlat")) {
-        await trackEvent("video_marciusi_hasonlat");
-      }
+ }
 
       if (mode === "random") {
         await trackEvent("gift_video_started_random");
@@ -902,11 +899,13 @@ if (mode === "pin_second") {
       }
     }
 
-   choiceBtn1.onclick = () => {
+ choiceBtn1.onclick = () => {
+  if (!pinVideos || !pinVideos.first) return;
   startSelectedVideo(pinVideos.first, "pin_first");
 };
 
 choiceBtn2.onclick = () => {
+  if (!pinVideos || !pinVideos.second) return;
   startSelectedVideo(pinVideos.second, "pin_second");
 };
 
