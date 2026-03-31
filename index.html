@@ -683,22 +683,29 @@
     let giftEndedNaturally = false;
     let pinVideos = null;
 
-    async function trackEvent(eventName) {
-      try {
-        await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "apikey": SUPABASE_KEY,
-            "Authorization": "Bearer " + SUPABASE_KEY,
-            "Prefer": "return=minimal"
-          },
-          body: JSON.stringify({ event: eventName })
-        });
-      } catch (err) {
-        console.log("Supabase track hiba:", err);
-      }
+async function trackEvent(eventName) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY,
+        "Prefer": "return=minimal"
+      },
+      body: JSON.stringify({ event: eventName })
+    });
+
+    if (!res.ok) {
+      const txt = await res.text();
+      console.log("Supabase válasz hiba:", res.status, eventName, txt);
+    } else {
+      console.log("Számolva:", eventName);
     }
+  } catch (err) {
+    console.log("Supabase track hiba:", eventName, err);
+  }
+}
 
     function showScreen(screen) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
