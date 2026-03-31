@@ -822,11 +822,11 @@ if (mode === "pin_second") {
 }
 
       if (mode === "manual") {
-        await trackEvent("gift_video_started_manual");
-        if (index !== null) {
-          await trackEvent(`gift_video_manual_item_${index + 1}`);
-        }
-      }
+  await trackEvent("gift_video_started_manual");
+  if (index !== null) {
+    await trackEvent(`gift_video_item_${index + 1}`);
+  }
+}
 
       try {
         await giftVideo.play();
