@@ -962,35 +962,39 @@ choiceBtn2.onclick = () => {
       digit1.focus();
     };
 
-    playBtn.onclick = async () => {
-      stopPinSound();
+ playBtn.onclick = async () => {
+  console.log("PLAY gomb lefutott");
 
-      endShown = false;
-      mobileEndScreen.style.display = 'none';
-      giftOverlay.classList.remove('show', 'withBg');
-      giftPlaylist.classList.remove("show");
-      playlistToggle.textContent = "Videók listája ▼";
+  stopPinSound();
 
-      giftVideo.pause();
-      giftVideo.removeAttribute('src');
-      giftVideo.load();
+  endShown = false;
+  mobileEndScreen.style.display = 'none';
+  giftOverlay.classList.remove('show', 'withBg');
+  giftPlaylist.classList.remove("show");
+  playlistToggle.textContent = "Videók listája ▼";
 
-      resetPinUI();
+  giftVideo.pause();
+  giftVideo.removeAttribute('src');
+  giftVideo.load();
 
-      videoScreen.style.display = 'flex';
-      showScreen(videoScreen);
+  resetPinUI();
 
-      mainVideo.src = VIDEO_URL + "?t=" + Date.now();
-      mainVideo.load();
+  videoScreen.style.display = 'flex';
+  showScreen(videoScreen);
 
-      await trackEvent("main_video_start");
+  mainVideo.src = VIDEO_URL + "?t=" + Date.now();
+  mainVideo.load();
 
-      try {
-        await mainVideo.play();
-      } catch (e) {
-        console.log("Main video play hiba:", e);
-      }
-    };
+  console.log("main_video_start küldés előtt");
+  await trackEvent("main_video_start");
+  console.log("main_video_start küldés után");
+
+  try {
+    await mainVideo.play();
+  } catch (e) {
+    console.log("Main video play hiba:", e);
+  }
+};
 
     mainVideo.addEventListener('timeupdate', async () => {
       if (!endShown && mainVideo.currentTime >= END_TIME) {
