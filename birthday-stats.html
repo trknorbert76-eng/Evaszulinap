@@ -140,7 +140,7 @@ function addRow(tbody, label, value){
 async function loadStats(){
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=event,created_at&order=id.desc&_ts=${Date.now()}`,
+     `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=event,created_at&order=id.desc`
       {
         headers: {
           apikey: SUPABASE_KEY,
