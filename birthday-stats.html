@@ -138,47 +138,64 @@ function addRow(tbody, label, value){
 }
 
 async function loadStats(){
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=event`,
-    {
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: "Bearer " + SUPABASE_KEY
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=event,created_at&order=id.desc&_ts=${Date.now()}`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: "Bearer " + SUPABASE_KEY
+        },
+        cache: "no-store"
       }
+    );
+
+    if (!res.ok) {
+      const txt = await res.text();
+      alert("Hiba a statisztika betöltésekor: " + res.status + "\n" + txt);
+      return;
     }
-  );
 
-  const data = await res.json();
-  const counts = countEvents(data);
+    const data = await res.json();
+    const counts = countEvents(data);
 
-  const mainVideoTable = document.getElementById("mainVideoTable");
-  const pinTable = document.getElementById("pinTable");
-  const giftSummaryTable = document.getElementById("giftSummaryTable");
-  const giftItemsTable = document.getElementById("giftItemsTable");
+    const mainVideoTable = document.getElementById("mainVideoTable");
+    const pinTable = document.getElementById("pinTable");
+    const giftSummaryTable = document.getElementById("giftSummaryTable");
+    const giftItemsTable = document.getElementById("giftItemsTable");
 
-  addRow(mainVideoTable, "Bicajos út – indítás", counts["main_video_start"]);
-  addRow(mainVideoTable, "Bicajos út – végéig jutás", counts["main_video_end"]);
+    mainVideoTable.innerHTML = "";
+    pinTable.innerHTML = "";
+    giftSummaryTable.innerHTML = "";
+    giftItemsTable.innerHTML = "";
 
-  addRow(pinTable, "PIN próbálkozás összesen", counts["pin_attempt_total"]);
-  addRow(pinTable, "Helyes PIN", counts["pin_correct"]);
-  addRow(pinTable, "Hibás PIN", counts["pin_wrong"]);
-  addRow(pinTable, "Üres tovább", counts["pin_empty_continue"]);
+    addRow(mainVideoTable, "Bicajos út – indítás", counts["main_video_start"]);
+    addRow(mainVideoTable, "Bicajos út – végéig jutás", counts["main_video_end"]);
 
-  addRow(giftSummaryTable, "Összes ajándék videó indítás", counts["gift_video_started_total"]);
-  addRow(giftSummaryTable, "Ebből random", counts["gift_video_started_random"]);
-  addRow(giftSummaryTable, "Ebből PIN-es külön videó", counts["gift_video_started_pin"]);
-  addRow(giftSummaryTable, "Ebből listából indított", counts["gift_video_started_manual"]);
+    addRow(pinTable, "PIN próbálkozás összesen", counts["pin_attempt_total"]);
+    addRow(pinTable, "Helyes PIN", counts["pin_correct"]);
+    addRow(pinTable, "Hibás PIN", counts["pin_wrong"]);
+    addRow(pinTable, "Üres tovább", counts["pin_empty_continue"]);
 
-  for (let i = 1; i <= 10; i++) {
-    addRow(giftItemsTable, videoNames[i], counts[`gift_video_item_${i}`]);
+    addRow(giftSummaryTable, "Összes ajándék videó indítás", counts["gift_video_started_total"]);
+    addRow(giftSummaryTable, "Ebből random", counts["gift_video_started_random"]);
+    addRow(giftSummaryTable, "Ebből PIN-es külön videó", counts["gift_video_started_pin"]);
+    addRow(giftSummaryTable, "Ebből listából indított", counts["gift_video_started_manual"]);
+
+    for (let i = 1; i <= 10; i++) {
+      addRow(giftItemsTable, videoNames[i], counts[`gift_video_item_${i}`]);
+    }
+
+    addRow(giftItemsTable, "🎁 Róka 2 – Ajándék videó", counts["gift_video_item_pin_1"]);
+    addRow(giftItemsTable, "🎬 Tyúk1 – Reakció", counts["gift_video_item_pin_2"]);
+  } catch (err) {
+    alert("Betöltési hiba: " + err.message);
+    console.log(err);
   }
-
-  addRow(giftItemsTable, "🎁 Róka 2 – Ajándék videó", counts["gift_video_item_pin_1"]);
-  addRow(giftItemsTable, "🎬 Tyúk1 – Reakció", counts["gift_video_item_pin_2"]);
 }
 
 loadStats();
+setInterval(loadStats, 15000);
 </script>
-
 </body>
 </html>
