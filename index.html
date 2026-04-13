@@ -602,296 +602,308 @@
 
   <audio id="pinSound" src="pinhang.mp3" preload="auto" loop></audio>
 
-  <script>
-    const mainVideo = document.getElementById('mainVideo');
-    const playBtn = document.getElementById('playBtn');
-    const startScreen = document.getElementById('startScreen');
-    const videoScreen = document.getElementById('videoScreen');
-    const mobileEndScreen = document.getElementById('mobileEndScreen');
-    const pinPanel = document.getElementById('pinPanel');
-    const continueBtn = document.getElementById('continueBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const pinMessage = document.getElementById('pinMessage');
-    const digit1 = document.getElementById('digit1');
-    const digit2 = document.getElementById('digit2');
-    const digit3 = document.getElementById('digit3');
-    const digit4 = document.getElementById('digit4');
-    const pinInputs = [digit1, digit2, digit3, digit4];
-    const giftOverlay = document.getElementById('giftOverlay');
-    const giftVideo = document.getElementById('giftVideo');
-    const giftCloseBtn = document.getElementById('giftCloseBtn');
-    const giftList = document.getElementById('giftList');
-    const playlistToggle = document.getElementById('playlistToggle');
-    const giftPlaylist = document.getElementById('giftPlaylist');
-    const pinSound = document.getElementById('pinSound');
-    const pinChoiceBox = document.getElementById('pinChoiceBox');
-    const choiceBtn1 = document.getElementById('choiceBtn1');
-    const choiceBtn2 = document.getElementById('choiceBtn2');
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-   const VIDEO_URL = "https://vz-ac581b90-728.b-cdn.net/c26393b8-00c8-4a65-89a9-cd4192d1a224/playlist.m3u8";
-    const WORKER_URL = "https://shy-hall-764d.trknorbert76.workers.dev";
+<script>
+  const mainVideo = document.getElementById('mainVideo');
+  const playBtn = document.getElementById('playBtn');
+  const startScreen = document.getElementById('startScreen');
+  const videoScreen = document.getElementById('videoScreen');
+  const mobileEndScreen = document.getElementById('mobileEndScreen');
+  const pinPanel = document.getElementById('pinPanel');
+  const continueBtn = document.getElementById('continueBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const pinMessage = document.getElementById('pinMessage');
+  const digit1 = document.getElementById('digit1');
+  const digit2 = document.getElementById('digit2');
+  const digit3 = document.getElementById('digit3');
+  const digit4 = document.getElementById('digit4');
+  const pinInputs = [digit1, digit2, digit3, digit4];
+  const giftOverlay = document.getElementById('giftOverlay');
+  const giftVideo = document.getElementById('giftVideo');
+  const giftCloseBtn = document.getElementById('giftCloseBtn');
+  const giftList = document.getElementById('giftList');
+  const playlistToggle = document.getElementById('playlistToggle');
+  const giftPlaylist = document.getElementById('giftPlaylist');
+  const pinSound = document.getElementById('pinSound');
+  const pinChoiceBox = document.getElementById('pinChoiceBox');
+  const choiceBtn1 = document.getElementById('choiceBtn1');
+  const choiceBtn2 = document.getElementById('choiceBtn2');
 
-    const SUPABASE_URL = "https://hhysuxfwdjwlxtmlxnrv.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_4Btoi0wsypr48xQH31RMaQ_r1YrPpsv";
-    const SUPABASE_TABLE = "birthday_stats";
+  const VIDEO_URL = "https://vz-ac581b90-728.b-cdn.net/c26393b8-00c8-4a65-89a9-cd4192d1a224/playlist.m3u8";
+  const WORKER_URL = "https://shy-hall-764d.trknorbert76.workers.dev";
 
-    const giftVideos = [
-      {
-        title: "💛 Három vers a szerelemről",
-        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134175/T%C3%B6r%C3%B6k_Norbert_3_vers_a_szerelemr%C5%91l_gm8zu6.mp4"
-      },
-      {
-        title: "🌿 25 évesen",
-        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134156/25_%C3%A9vesen---T%C3%B6r%C3%B6k_Norbert_verse_am6wtk.mp4"
-      },
-      {
-        title: "🗼 Párizs – Room tour",
-        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134159/P%C3%A1rizs_Room_tour_2025_rnchhh.mp4"
-      },
-      {
-        title: "✨ Legszebb",
-        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134153/Legszebb----T%C3%B6r%C3%B6k_Norbert_verse_bq7ori.mp4"
-      },
-      {
-        title: "💌 Évámnak a boldogságról",
-        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134139/%C3%88v%C3%A1mnak_a_boldogs%C3%A1gr%C3%B3l_T%C3%B6r%C3%B6k_Norbert_verse_kwx2lb.mp4"
-      },
-      {
-        title: "🎂 Márciusi hasonlat",
-        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774650954/M%C3%A1rciusi_hasonlat_qnojb1.mp4"
-      },
-      {
-        title: "💍 25. házassági évfordulónkra",
-        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134129/25_H%C3%A1zass%C3%A1gi_%C3%A9vfordul%C3%B3nkra_howpjg.mp4"
-      },
-      {
-        title: "🔥 Mindhalálig",
-        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134104/T%C3%B6r%C3%B6k_Norbert_Mindhal%C3%A1lig_wtvuc8.mp4"
-      },
-      {
-        title: "🕊️ 29. házassági évfordulónkra",
-        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134106/%C3%88vfordul%C3%B3_29._aqqeaq.mp4"
-      },
-      {
-        title: "🌙 Ahogy vagy…",
-        url: "https://res.cloudinary.com/dgcumjeuj/video/upload/v1774134099/T%C3%B6r%C3%B6k_Norbert_Ahogy_vagy.._n3ukws.mp4"
-      }
-    ];
+  const SUPABASE_URL = "https://hhysuxfwdjwlxtmlxnrv.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_4Btoi0wsypr48xQH31RMaQ_r1YrPpsv";
+  const SUPABASE_TABLE = "birthday_stats";
 
-    const END_TIME = 255;
-    let endShown = false;
-    let naughtyStep = 0;
-    let giftEndedNaturally = false;
-    let pinVideos = null;
-
-async function trackEvent(eventName) {
-  try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "apikey": SUPABASE_KEY,
-        "Authorization": "Bearer " + SUPABASE_KEY,
-        "Prefer": "return=minimal"
-      },
-      body: JSON.stringify({ event: eventName })
-    });
-
-    if (!res.ok) {
-      const txt = await res.text();
-      console.log("Supabase válasz hiba:", res.status, eventName, txt);
-    } else {
-      console.log("Számolva:", eventName);
+  const giftVideos = [
+    {
+      title: "💛 Három vers a szerelemről",
+      url: "https://vz-ac581b90-728.b-cdn.net/cfe8f721-4c0e-4c9a-97da-fb3cff8b286d/playlist.m3u8"
+    },
+    {
+      title: "🌿 25 évesen",
+      url: "https://vz-ac581b90-728.b-cdn.net/336c016a-8dae-47be-99c3-063c5c6d0333/playlist.m3u8"
+    },
+    {
+      title: "🗼 Párizs – Room tour",
+      url: "https://vz-ac581b90-728.b-cdn.net/99ae0c1e-4973-410c-9ba6-6c8ecfd25f4d/playlist.m3u8"
+    },
+    {
+      title: "✨ Legszebb",
+      url: "https://vz-ac581b90-728.b-cdn.net/ac225df0-8b5a-4ed4-a02f-362dfc66dec8/playlist.m3u8"
+    },
+    {
+      title: "💌 Évámnak a boldogságról",
+      url: "https://vz-ac581b90-728.b-cdn.net/7fc3bc27-f970-4293-b6ea-e90bf000bf75/playlist.m3u8"
+    },
+    {
+      title: "🎂 Márciusi hasonlat",
+      url: "https://vz-ac581b90-728.b-cdn.net/80fc2b18-eb26-4706-a45b-04d474f053c9/playlist.m3u8"
+    },
+    {
+      title: "💍 25. házassági évfordulónkra",
+      url: "https://vz-ac581b90-728.b-cdn.net/6d806f9f-5140-4093-b404-a1d9a05c1182/playlist.m3u8"
+    },
+    {
+      title: "🔥 Mindhalálig",
+      url: "https://vz-ac581b90-728.b-cdn.net/887c7be0-54ff-415e-bbd7-3ca5b1c51425/playlist.m3u8"
+    },
+    {
+      title: "🕊️ 29. házassági évfordulónkra",
+      url: "https://vz-ac581b90-728.b-cdn.net/cdfdb53e-ad0e-48f3-8cbb-fce6800b7302/playlist.m3u8"
+    },
+    {
+      title: "🌙 Ahogy vagy…",
+      url: "https://vz-ac581b90-728.b-cdn.net/8c0790cc-48fd-4b60-b2cb-444e644505ac/playlist.m3u8"
     }
-  } catch (err) {
-    console.log("Supabase track hiba:", eventName, err);
-  }
-}
+  ];
 
-    function showScreen(screen) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      screen.classList.add('active');
-    }
+  const END_TIME = 255;
+  let endShown = false;
+  let naughtyStep = 0;
+  let giftEndedNaturally = false;
+  let pinVideos = null;
 
-    function getRandomGiftVideoData() {
-      const index = Math.floor(Math.random() * giftVideos.length);
-      return {
-        item: giftVideos[index],
-        index: index
-      };
-    }
-
-    function renderGiftList(activeIndex = null) {
-      giftList.innerHTML = "";
-
-      giftVideos.forEach((video, index) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "giftItem" + (index === activeIndex ? " active" : "");
-        btn.textContent = video.title;
-
-        btn.onclick = async () => {
-          await startSelectedVideo(video.url, "manual", index);
-        };
-
-        giftList.appendChild(btn);
+  async function trackEvent(eventName) {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_KEY,
+          "Authorization": "Bearer " + SUPABASE_KEY,
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify({ event: eventName })
       });
-    }
 
-    function startPinSound() {
-      if (!pinSound) return;
-      pinSound.currentTime = 0;
-      pinSound.play().catch(() => {});
-    }
-
-    function stopPinSound() {
-      if (!pinSound) return;
-      pinSound.pause();
-      pinSound.currentTime = 0;
-    }
-
-    function resetPinUI() {
-      pinInputs.forEach(input => input.value = "");
-      pinMessage.textContent = "";
-      pinPanel.style.display = "block";
-      naughtyStep = 0;
-      pinVideos = null;
-      pinChoiceBox.style.display = "none";
-    }
-
-    async function exitAnyFullscreen() {
-      try {
-        if (document.fullscreenElement && document.exitFullscreen) {
-          await document.exitFullscreen();
-        }
-      } catch (e) {
-        console.log("document fullscreen exit hiba:", e);
-      }
-
-      try {
-        if (document.webkitFullscreenElement && document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        }
-      } catch (e) {
-        console.log("webkit fullscreen exit hiba:", e);
-      }
-
-      try {
-        if (mainVideo.webkitDisplayingFullscreen && mainVideo.webkitExitFullscreen) {
-          mainVideo.webkitExitFullscreen();
-        }
-      } catch (e) {
-        console.log("video fullscreen exit hiba:", e);
-      }
-    }
-
-    async function startSelectedVideo(videoUrl, mode, index = null) {
-      stopPinSound();
-
-      pinPanel.style.display = "none";
-      mobileEndScreen.style.display = "none";
-      giftOverlay.classList.add('show');
-      giftOverlay.classList.add('withBg');
-
-      renderGiftList(index);
-
-      if (mode === "random") {
-        giftPlaylist.classList.remove("show");
-        playlistToggle.textContent = "Videók listája ▼";
+      if (!res.ok) {
+        const txt = await res.text();
+        console.log("Supabase válasz hiba:", res.status, eventName, txt);
       } else {
-        giftPlaylist.classList.add("show");
-        playlistToggle.textContent = "Videók listája ▲";
+        console.log("Számolva:", eventName);
       }
+    } catch (err) {
+      console.log("Supabase track hiba:", eventName, err);
+    }
+  }
 
-      giftEndedNaturally = false;
+  function showScreen(screen) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    screen.classList.add('active');
+  }
 
-      giftVideo.pause();
-      giftVideo.src = videoUrl + "?t=" + Date.now();
-      giftVideo.load();
+  function getRandomGiftVideoData() {
+    const index = Math.floor(Math.random() * giftVideos.length);
+    return {
+      item: giftVideos[index],
+      index: index
+    };
+  }
 
-      await trackEvent("gift_video_started_total");
- 
+  function renderGiftList(activeIndex = null) {
+    giftList.innerHTML = "";
 
-      if (mode === "random") {
-        await trackEvent("gift_video_started_random");
-        if (index !== null) {
-          await trackEvent(`gift_video_item_${index + 1}`);
-        }
+    giftVideos.forEach((video, index) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "giftItem" + (index === activeIndex ? " active" : "");
+      btn.textContent = video.title;
+
+      btn.onclick = async () => {
+        await startSelectedVideo(video.url, "manual", index);
+      };
+
+      giftList.appendChild(btn);
+    });
+  }
+
+  function startPinSound() {
+    if (!pinSound) return;
+    pinSound.currentTime = 0;
+    pinSound.play().catch(() => {});
+  }
+
+  function stopPinSound() {
+    if (!pinSound) return;
+    pinSound.pause();
+    pinSound.currentTime = 0;
+  }
+
+  function resetPinUI() {
+    pinInputs.forEach(input => input.value = "");
+    pinMessage.textContent = "";
+    pinPanel.style.display = "block";
+    naughtyStep = 0;
+    pinVideos = null;
+    pinChoiceBox.style.display = "none";
+  }
+
+  async function exitAnyFullscreen() {
+    try {
+      if (document.fullscreenElement && document.exitFullscreen) {
+        await document.exitFullscreen();
       }
+    } catch (e) {
+      console.log("document fullscreen exit hiba:", e);
+    }
+
+    try {
+      if (document.webkitFullscreenElement && document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    } catch (e) {
+      console.log("webkit fullscreen exit hiba:", e);
+    }
+
+    try {
+      if (mainVideo.webkitDisplayingFullscreen && mainVideo.webkitExitFullscreen) {
+        mainVideo.webkitExitFullscreen();
+      }
+    } catch (e) {
+      console.log("video fullscreen exit hiba:", e);
+    }
+  }
+
+  async function startSelectedVideo(videoUrl, mode, index = null) {
+    stopPinSound();
+
+    pinPanel.style.display = "none";
+    mobileEndScreen.style.display = "none";
+    giftOverlay.classList.add('show');
+    giftOverlay.classList.add('withBg');
+
+    renderGiftList(index);
+
+    if (mode === "random") {
+      giftPlaylist.classList.remove("show");
+      playlistToggle.textContent = "Videók listája ▼";
+    } else {
+      giftPlaylist.classList.add("show");
+      playlistToggle.textContent = "Videók listája ▲";
+    }
+
+    giftEndedNaturally = false;
+
+    if (window.giftHls) {
+      window.giftHls.destroy();
+      window.giftHls = null;
+    }
+
+    giftVideo.pause();
+    giftVideo.removeAttribute('src');
+    giftVideo.load();
+
+    const videoSrc = videoUrl + (videoUrl.includes("?") ? "&" : "?") + "t=" + Date.now();
+
+    await trackEvent("gift_video_started_total");
+
+    if (mode === "random") {
+      await trackEvent("gift_video_started_random");
+      if (index !== null) {
+        await trackEvent(`gift_video_item_${index + 1}`);
+      }
+    }
 
     if (mode === "pin_first") {
-  await trackEvent("gift_video_started_pin");
-  await trackEvent("gift_video_item_pin_1");
-}
+      await trackEvent("gift_video_started_pin");
+      await trackEvent("gift_video_item_pin_1");
+    }
 
-if (mode === "pin_second") {
-  await trackEvent("gift_video_started_pin");
-  await trackEvent("gift_video_item_pin_2");
-}
+    if (mode === "pin_second") {
+      await trackEvent("gift_video_started_pin");
+      await trackEvent("gift_video_item_pin_2");
+    }
 
-      if (mode === "manual") {
-  await trackEvent("gift_video_started_manual");
-  if (index !== null) {
-    await trackEvent(`gift_video_item_${index + 1}`);
-  }
-}
+    if (mode === "manual") {
+      await trackEvent("gift_video_started_manual");
+      if (index !== null) {
+        await trackEvent(`gift_video_item_${index + 1}`);
+      }
+    }
+
+    if (window.Hls && Hls.isSupported()) {
+      window.giftHls = new Hls();
+      window.giftHls.loadSource(videoSrc);
+      window.giftHls.attachMedia(giftVideo);
+
+      window.giftHls.on(Hls.Events.MANIFEST_PARSED, async () => {
+        try {
+          await giftVideo.play();
+        } catch (e) {
+          console.log("Gift video play hiba:", e);
+        }
+      });
+    } else if (giftVideo.canPlayType("application/vnd.apple.mpegurl")) {
+      giftVideo.src = videoSrc;
+      giftVideo.load();
 
       try {
         await giftVideo.play();
       } catch (e) {
-        console.log("Video play hiba:", e);
+        console.log("Gift video play hiba:", e);
       }
+    } else {
+      console.log("A böngésző nem támogatja a HLS videót.");
+    }
+  }
+
+  async function handlePinSubmit() {
+    const code = pinInputs.map(input => input.value).join('').trim();
+
+    if (!code) {
+      stopPinSound();
+      await trackEvent("pin_empty_continue");
+      const selected = getRandomGiftVideoData();
+      startSelectedVideo(selected.item.url, "random", selected.index);
+      return;
     }
 
-    async function handlePinSubmit() {
-      const code = pinInputs.map(input => input.value).join('').trim();
+    await trackEvent("pin_attempt_total");
 
-      if (!code) {
-        stopPinSound();
-        await trackEvent("pin_empty_continue");
-        const selected = getRandomGiftVideoData();
-        startSelectedVideo(selected.item.url, "random", selected.index);
-        return;
-      }
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code })
+      });
 
-      await trackEvent("pin_attempt_total");
+      const data = await res.json();
 
-      try {
-        const res = await fetch(WORKER_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code })
-        });
+      if (data.ok && data.videos) {
+        await trackEvent("pin_correct");
 
-        const data = await res.json();
+        pinMessage.textContent = "Szia Éva, boldog szülinapot!";
+        naughtyStep = 0;
+        pinVideos = data.videos;
 
-        if (data.ok && data.videos) {
-          await trackEvent("pin_correct");
-
-          pinMessage.textContent = "Szia Éva, boldog szülinapot!";
-          naughtyStep = 0;
-          pinVideos = data.videos;
-
-          setTimeout(() => {
-            pinMessage.textContent = "";
-            pinChoiceBox.style.display = "block";
-          }, 1200);
-        } else {
-          await trackEvent("pin_wrong");
-
-          naughtyStep++;
-          if (naughtyStep === 1) {
-            pinMessage.textContent = "Te kis huncut!";
-            pinPanel.classList.add("shake");
-            setTimeout(() => pinPanel.classList.remove("shake"), 400);
-          } else {
-            pinMessage.textContent = "Ha nem az Éva vagy, töröld ki a kódot, hagyd üresen, és menj a Továbbal.";
-            pinPanel.classList.add("shake");
-            setTimeout(() => pinPanel.classList.remove("shake"), 400);
-          }
-        }
-      } catch (err) {
-        console.log("Worker hiba:", err);
+        setTimeout(() => {
+          pinMessage.textContent = "";
+          pinChoiceBox.style.display = "block";
+        }, 1200);
+      } else {
         await trackEvent("pin_wrong");
 
         naughtyStep++;
@@ -905,172 +917,234 @@ if (mode === "pin_second") {
           setTimeout(() => pinPanel.classList.remove("shake"), 400);
         }
       }
+    } catch (err) {
+      console.log("Worker hiba:", err);
+      await trackEvent("pin_wrong");
+
+      naughtyStep++;
+      if (naughtyStep === 1) {
+        pinMessage.textContent = "Te kis huncut!";
+        pinPanel.classList.add("shake");
+        setTimeout(() => pinPanel.classList.remove("shake"), 400);
+      } else {
+        pinMessage.textContent = "Ha nem az Éva vagy, töröld ki a kódot, hagyd üresen, és menj a Továbbal.";
+        pinPanel.classList.add("shake");
+        setTimeout(() => pinPanel.classList.remove("shake"), 400);
+      }
     }
-
- choiceBtn1.onclick = () => {
-  if (!pinVideos || !pinVideos.first) return;
-  startSelectedVideo(pinVideos.first, "pin_first");
-};
-
-choiceBtn2.onclick = () => {
-  if (!pinVideos || !pinVideos.second) return;
-  startSelectedVideo(pinVideos.second, "pin_second");
-};
-
-    pinInputs.forEach((input, index) => {
-      input.addEventListener("input", () => {
-        input.value = input.value.replace(/\D/g, "").slice(0, 1);
-
-        if (pinInputs.every(i => i.value === "")) {
-          naughtyStep = 0;
-          pinMessage.textContent = "";
-          pinChoiceBox.style.display = "none";
-          pinVideos = null;
-        }
-
-        if (input.value && index < pinInputs.length - 1) {
-          pinInputs[index + 1].focus();
-        }
-      });
-
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Backspace" && !input.value && index > 0) {
-          pinInputs[index - 1].focus();
-        }
-        if (e.key === "Enter") {
-          handlePinSubmit();
-        }
-      });
-    });
-
-    playlistToggle.onclick = () => {
-      giftPlaylist.classList.toggle("show");
-      playlistToggle.textContent = giftPlaylist.classList.contains("show")
-        ? "Videók listája ▲"
-        : "Videók listája ▼";
-    };
-
-    continueBtn.onclick = () => {
-      handlePinSubmit();
-    };
-
-    clearBtn.onclick = async () => {
-      pinInputs.forEach(input => input.value = "");
-      pinMessage.textContent = "";
-      naughtyStep = 0;
-      pinChoiceBox.style.display = "none";
-      pinVideos = null;
-      digit1.focus();
-    };
-
- playBtn.onclick = async () => {
-  console.log("PLAY gomb lefutott");
-
-  stopPinSound();
-
-  endShown = false;
-  mobileEndScreen.style.display = 'none';
-  giftOverlay.classList.remove('show', 'withBg');
-  giftPlaylist.classList.remove("show");
-  playlistToggle.textContent = "Videók listája ▼";
-
-  giftVideo.pause();
-  giftVideo.removeAttribute('src');
-  giftVideo.load();
-
-  resetPinUI();
-
-  videoScreen.style.display = 'flex';
-  showScreen(videoScreen);
-
-  mainVideo.src = VIDEO_URL + "?t=" + Date.now();
-  mainVideo.load();
-
-  console.log("main_video_start küldés előtt");
-  await trackEvent("main_video_start");
-  console.log("main_video_start küldés után");
-
-  try {
-    await mainVideo.play();
-  } catch (e) {
-    console.log("Main video play hiba:", e);
   }
-};
 
-    mainVideo.addEventListener('timeupdate', async () => {
-      if (!endShown && mainVideo.currentTime >= END_TIME) {
-        endShown = true;
-        mainVideo.pause();
+  choiceBtn1.onclick = () => {
+    if (!pinVideos || !pinVideos.first) return;
+    startSelectedVideo(pinVideos.first, "pin_first");
+  };
 
-        await trackEvent("main_video_end");
+  choiceBtn2.onclick = () => {
+    if (!pinVideos || !pinVideos.second) return;
+    startSelectedVideo(pinVideos.second, "pin_second");
+  };
 
-        await exitAnyFullscreen();
+  pinInputs.forEach((input, index) => {
+    input.addEventListener("input", () => {
+      input.value = input.value.replace(/\D/g, "").slice(0, 1);
 
-        videoScreen.classList.remove('active');
-        videoScreen.style.display = 'none';
+      if (pinInputs.every(i => i.value === "")) {
+        naughtyStep = 0;
+        pinMessage.textContent = "";
+        pinChoiceBox.style.display = "none";
+        pinVideos = null;
+      }
 
-        resetPinUI();
-        mobileEndScreen.style.display = 'block';
-        startPinSound();
-
-        setTimeout(() => {
-          digit1.focus();
-          pinPanel.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 300);
+      if (input.value && index < pinInputs.length - 1) {
+        pinInputs[index + 1].focus();
       }
     });
 
-    giftCloseBtn.onclick = async () => {
-      stopPinSound();
-
-      giftVideo.pause();
-      giftVideo.currentTime = 0;
-      giftVideo.removeAttribute('src');
-      giftVideo.load();
-      giftOverlay.classList.remove('show', 'withBg');
-      giftPlaylist.classList.remove("show");
-      playlistToggle.textContent = "Videók listája ▼";
-      showScreen(startScreen);
-    };
-
-    giftVideo.addEventListener('ended', async () => {
-      giftEndedNaturally = true;
-      stopPinSound();
-      giftVideo.currentTime = 0;
-      giftVideo.removeAttribute('src');
-      giftVideo.load();
-      giftOverlay.classList.remove('show', 'withBg');
-      giftPlaylist.classList.remove("show");
-      playlistToggle.textContent = "Videók listája ▼";
-      showScreen(startScreen);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !input.value && index > 0) {
+        pinInputs[index - 1].focus();
+      }
+      if (e.key === "Enter") {
+        handlePinSubmit();
+      }
     });
+  });
 
-    pinPanel.addEventListener('click', () => {
+  playlistToggle.onclick = () => {
+    giftPlaylist.classList.toggle("show");
+    playlistToggle.textContent = giftPlaylist.classList.contains("show")
+      ? "Videók listája ▲"
+      : "Videók listája ▼";
+  };
+
+  continueBtn.onclick = () => {
+    handlePinSubmit();
+  };
+
+  clearBtn.onclick = async () => {
+    pinInputs.forEach(input => input.value = "");
+    pinMessage.textContent = "";
+    naughtyStep = 0;
+    pinChoiceBox.style.display = "none";
+    pinVideos = null;
+    digit1.focus();
+  };
+
+  playBtn.onclick = async () => {
+    console.log("PLAY gomb lefutott");
+
+    stopPinSound();
+
+    endShown = false;
+    mobileEndScreen.style.display = 'none';
+    giftOverlay.classList.remove('show', 'withBg');
+    giftPlaylist.classList.remove("show");
+    playlistToggle.textContent = "Videók listája ▼";
+
+    if (window.giftHls) {
+      window.giftHls.destroy();
+      window.giftHls = null;
+    }
+
+    giftVideo.pause();
+    giftVideo.removeAttribute('src');
+    giftVideo.load();
+
+    if (window.mainHls) {
+      window.mainHls.destroy();
+      window.mainHls = null;
+    }
+
+    mainVideo.pause();
+    mainVideo.removeAttribute('src');
+    mainVideo.load();
+
+    resetPinUI();
+
+    videoScreen.style.display = 'flex';
+    showScreen(videoScreen);
+
+    const mainSrc = VIDEO_URL + (VIDEO_URL.includes("?") ? "&" : "?") + "t=" + Date.now();
+
+    if (window.Hls && Hls.isSupported()) {
+      window.mainHls = new Hls();
+      window.mainHls.loadSource(mainSrc);
+      window.mainHls.attachMedia(mainVideo);
+
+      window.mainHls.on(Hls.Events.MANIFEST_PARSED, async () => {
+        console.log("main_video_start küldés előtt");
+        await trackEvent("main_video_start");
+        console.log("main_video_start küldés után");
+
+        try {
+          await mainVideo.play();
+        } catch (e) {
+          console.log("Main video play hiba:", e);
+        }
+      });
+    } else if (mainVideo.canPlayType("application/vnd.apple.mpegurl")) {
+      mainVideo.src = mainSrc;
+      mainVideo.load();
+
+      console.log("main_video_start küldés előtt");
+      await trackEvent("main_video_start");
+      console.log("main_video_start küldés után");
+
+      try {
+        await mainVideo.play();
+      } catch (e) {
+        console.log("Main video play hiba:", e);
+      }
+    } else {
+      console.log("A böngésző nem támogatja a HLS videót.");
+    }
+  };
+
+  mainVideo.addEventListener('timeupdate', async () => {
+    if (!endShown && mainVideo.currentTime >= END_TIME) {
+      endShown = true;
+      mainVideo.pause();
+
+      await trackEvent("main_video_end");
+
+      await exitAnyFullscreen();
+
+      videoScreen.classList.remove('active');
+      videoScreen.style.display = 'none';
+
+      resetPinUI();
+      mobileEndScreen.style.display = 'block';
+      startPinSound();
+
       setTimeout(() => {
         digit1.focus();
         pinPanel.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 50);
-    });
+      }, 300);
+    }
+  });
 
-    window.addEventListener("resize", () => {
-      setTimeout(() => {
-        if (document.activeElement && document.activeElement.classList.contains("pinDigit")) {
-          document.querySelector(".pinPanel")?.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-          });
-        }
-      }, 200);
-    });
+  giftCloseBtn.onclick = async () => {
+    stopPinSound();
 
-    window.addEventListener("orientationchange", () => {
-      setTimeout(() => {
+    if (window.giftHls) {
+      window.giftHls.destroy();
+      window.giftHls = null;
+    }
+
+    giftVideo.pause();
+    giftVideo.currentTime = 0;
+    giftVideo.removeAttribute('src');
+    giftVideo.load();
+    giftOverlay.classList.remove('show', 'withBg');
+    giftPlaylist.classList.remove("show");
+    playlistToggle.textContent = "Videók listája ▼";
+    showScreen(startScreen);
+  };
+
+  giftVideo.addEventListener('ended', async () => {
+    giftEndedNaturally = true;
+    stopPinSound();
+
+    if (window.giftHls) {
+      window.giftHls.destroy();
+      window.giftHls = null;
+    }
+
+    giftVideo.currentTime = 0;
+    giftVideo.removeAttribute('src');
+    giftVideo.load();
+    giftOverlay.classList.remove('show', 'withBg');
+    giftPlaylist.classList.remove("show");
+    playlistToggle.textContent = "Videók listája ▼";
+    showScreen(startScreen);
+  });
+
+  pinPanel.addEventListener('click', () => {
+    setTimeout(() => {
+      digit1.focus();
+      pinPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  });
+
+  window.addEventListener("resize", () => {
+    setTimeout(() => {
+      if (document.activeElement && document.activeElement.classList.contains("pinDigit")) {
         document.querySelector(".pinPanel")?.scrollIntoView({
-          behavior: "auto",
+          behavior: "smooth",
           block: "center"
         });
-      }, 300);
-    });
-  </script>
+      }
+    }, 200);
+  });
+
+  window.addEventListener("orientationchange", () => {
+    setTimeout(() => {
+      document.querySelector(".pinPanel")?.scrollIntoView({
+        behavior: "auto",
+        block: "center"
+      });
+    }, 300);
+  });
+</script>
 </body>
 </html>
